@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Weekly Clinics | The HBC Volleyball Club</title>
-  <meta name="description" content="Weekly volleyball clinics in Huntington Beach with beginner, intermediate and advanced courts. 4-week sessions, start any time.">
+  <title>Calendar | The HBC Volleyball Club</title>
+  <meta name="description" content="Practices, tournaments, tryouts, clinics and club events for The HBC Volleyball Club in Huntington Beach.">
   <link rel="icon" href="images/logo-boys-64.png" type="image/png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,11 +28,11 @@
         <ul class="nav-links" id="nav-links">
           <li><a href="index.html">Home</a></li>
           <li><a href="about.html">About</a></li>
-          <li><a href="clinics.html" aria-current="page">Clinics</a></li>
+          <li><a href="clinics.html">Clinics</a></li>
           <li><a href="private-training.html">Private Training</a></li>
           <li><a href="summer-camp.html">Summer Camp</a></li>
           <li><a href="coaches.html">Coaches</a></li>
-          <li><a href="calendar.html">Calendar</a></li>
+          <li><a href="calendar.html" aria-current="page">Calendar</a></li>
           <li><a class="btn btn-primary" href="contact.html">Contact</a></li>
         </ul>
       </nav>
@@ -43,61 +43,53 @@
     <section class="page-hero">
       <div class="container">
         <div>
-          <span class="eyebrow">Clinics</span>
-          <h1>Weekly Volleyball Clinics</h1>
-          <p>Beginner, intermediate and advanced courts so every player trains at the level that's right for them. Open to boys and girls.</p>
+          <span class="eyebrow">Schedule</span>
+          <h1>Club <span class="script">Calendar</span></h1>
+          <p>Practices, tournaments, tryouts, clinics and club events for the whole season.</p>
         </div>
-        <img src="images/logo-girls.png" alt="The HBC girls volleyball logo" class="hero-mark" width="170" height="170">
+        <img src="images/logo-boys.png" alt="The HBC boys volleyball logo" class="hero-mark" width="170" height="170">
       </div>
       <svg class="waves" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true">
 <path d="M0 60c120-40 220-40 330 0s210 40 330 0 220-40 330 0 210 40 450-10"/>
 <path d="M0 76c160-26 300-26 450 0s290 26 450 0 300-26 540 4" opacity=".55"/>
 <path d="M60 42c90-28 170-28 250 0M760 40c90-26 180-26 270 0" opacity=".4"/>
 </svg>
-    </section>
-    <section class="section">
+    </section>    <section class="section">
       <div class="container">
-        <dl class="info">
-          <div><dt>Location</dt><dd>7661 Windfield Drive<br>Huntington Beach, CA 92647</dd></div>
-          <div><dt>Contact</dt><dd>Kim · (714) 305-9309</dd></div>
-          <div><dt>Email</dt><dd><a href="mailto:kimlucerohb@gmail.com">kimlucerohb@gmail.com</a></dd></div>
-        </dl>
-        <div class="split" style="margin-top:48px">
-          <div class="reveal">
-            <span class="eyebrow">How Clinics Work</span>
-            <h2>4-week sessions. Start any time.</h2>
-            <p class="lead">Our weekly clinics run in 4-week sessions, and players can jump in whenever they're ready. There's no need to wait for a new season.</p>
-            <ul class="checklist">
-              <li>Tuesdays &amp; Thursdays, 4:00 – 5:30 PM</li>
-              <li>Players are grouped by skill level</li>
-              <li>Experienced coaches on every court</li>
-              <li>Open to boys and girls, club players or not</li>
-            </ul>
-            <p class="notice">Clinic days and times can change by season, so please confirm the current schedule with Kim before your first session.</p>
+        <div class="calendar" id="hbc-calendar" data-base="" data-program="">
+          <div class="cal-toolbar">
+            <div class="cal-nav">
+              <button type="button" class="cal-btn" data-nav="prev" aria-label="Previous month">&#8249;</button>
+              <h2 class="cal-title" aria-live="polite">Calendar</h2>
+              <button type="button" class="cal-btn" data-nav="next" aria-label="Next month">&#8250;</button>
+              <button type="button" class="cal-btn cal-today" data-nav="today">Today</button>
+            </div>
+            <div class="cal-controls">
+          <div class="cal-seg" role="group" aria-label="Show program">
+            <button type="button" data-filter="everything" aria-pressed="true">Everything</button>
+            <button type="button" data-filter="boys">Boys</button>
+            <button type="button" data-filter="girls">Girls</button>
           </div>
-          <div class="visual duo reveal"><img src="images/logo-boys.png" alt="The HBC boys volleyball logo" width="300" height="300" loading="lazy"><img src="images/logo-girls.png" alt="The HBC girls volleyball logo" width="300" height="300" loading="lazy"><svg class="waves" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true">
-<path d="M0 60c120-40 220-40 330 0s210 40 330 0 220-40 330 0 210 40 450-10"/>
-<path d="M0 76c160-26 300-26 450 0s290 26 450 0 300-26 540 4" opacity=".55"/>
-<path d="M60 42c90-28 170-28 250 0M760 40c90-26 180-26 270 0" opacity=".4"/>
-</svg></div>
+              <div class="cal-seg" role="group" aria-label="View">
+                <button type="button" data-view="month" aria-pressed="true">Month</button>
+                <button type="button" data-view="list">List</button>
+              </div>
+            </div>
+          </div>
+          <p class="cal-note">Showing events for the whole club. Use the buttons to show only the boys or girls schedule. Click any event for time, location and details.</p>
+          <div class="cal-body"><p class="cal-empty">Loading calendar…</p></div>
+        <ul class="cal-legend">
+          <li><span class="cal-dot p-all"></span>Whole club</li>
+          <li><span class="cal-dot p-boys"></span>HBC Boys</li>
+          <li><span class="cal-dot p-girls"></span>HBC Girls</li>
+        </ul>
         </div>
       </div>
     </section>
-
-    <section class="section alt">
-      <div class="container">
-        <div class="center reveal">
-          <span class="eyebrow">Choose Your Court</span>
-          <h2>Three levels of training</h2>
-          <p class="lead">Our experienced coaches help players learn the basics, build confidence, strengthen fundamentals and fine-tune their skills.</p>
-        </div>
-        <div class="grid grid-3" style="margin-top:40px">
-          <div class="card level reveal"><span class="tag">Level 1</span><h3>Beginner</h3><p>Learn the basics of passing, setting, serving and hitting in a fun, encouraging setting. Perfect for new players.</p></div>
-          <div class="card level l2 reveal"><span class="tag soft">Level 2</span><h3>Intermediate</h3><p>Build confidence and strengthen fundamentals with more reps, game situations and team play.</p></div>
-          <div class="card level l3 reveal"><span class="tag pink">Level 3</span><h3>Advanced</h3><p>Fine-tune skills, sharpen technique and train at a higher tempo to prepare for club and high school play.</p></div>
-        </div>
-      </div>
-    </section>
+    <dialog id="cal-dialog" class="cal-dialog">
+      <button type="button" class="cal-close" aria-label="Close">&times;</button>
+      <div class="cal-d-body"></div>
+    </dialog>
     <section class="section">
       <div class="container">
         <div class="cta reveal">
@@ -167,5 +159,7 @@
     </div>
   </footer>
   <script src="js/main.js"></script>
+  <script src="js/events.js"></script>
+  <script src="js/calendar.js"></script>
 </body>
 </html>

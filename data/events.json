@@ -1,0 +1,33 @@
+{
+  "updated": "2026-09-22",
+  "events": [
+    {
+      "id": "clinic-tue",
+      "title": "Weekly Clinic",
+      "program": "all",
+      "type": "clinic",
+      "date": "2026-09-01",
+      "start": "16:00",
+      "end": "17:30",
+      "location": "7661 Windfield Dr, Huntington Beach",
+      "notes": "Beginner, intermediate and advanced courts. Please confirm the current schedule with Kim.",
+      "repeat": "weekly",
+      "until": "2027-06-30",
+      "skip": []
+    },
+    {
+      "id": "clinic-thu",
+      "title": "Weekly Clinic",
+      "program": "all",
+      "type": "clinic",
+      "date": "2026-09-03",
+      "start": "16:00",
+      "end": "17:30",
+      "location": "7661 Windfield Dr, Huntington Beach",
+      "notes": "Beginner, intermediate and advanced courts. Please confirm the current schedule with Kim.",
+      "repeat": "weekly",
+      "until": "2027-06-30",
+      "skip": []
+    }
+  ]
+}

@@ -35,14 +35,14 @@ FIN = '<svg class="fin" viewBox="0 0 60 30" aria-hidden="true"><path d="M4 28C18
 WINGS = {
   "club":  {"label": "Club", "home": "~/index.html", "sub": "VOLLEYBALL CLUB", "favicon": "logo-boys-64.png",
             "nav": [("~/index.html","Home"),("~/about.html","About"),("~/clinics.html","Clinics"),("~/private-training.html","Private Training"),
-                    ("~/summer-camp.html","Summer Camp"),("~/coaches.html","Coaches")],
+                    ("~/summer-camp.html","Summer Camp"),("~/coaches.html","Coaches"),("~/calendar.html","Calendar")],
             "contact": "~/contact.html"},
   "boys":  {"label": "Boys", "home": "~/boys/index.html", "sub": "BOYS VOLLEYBALL", "favicon": "logo-boys-64.png",
-            "nav": [("~/boys/index.html","Boys Home"),("~/boys/teams.html","Teams &amp; Tryouts"),("~/boys/coaches.html","Coaches"),
+            "nav": [("~/boys/index.html","Boys Home"),("~/boys/teams.html","Teams &amp; Tryouts"),("~/boys/calendar.html","Calendar"),("~/boys/coaches.html","Coaches"),
                     ("~/clinics.html","Clinics"),("~/private-training.html","Private Training")],
             "contact": "~/contact.html?program=boys"},
   "girls": {"label": "Girls", "home": "~/girls/index.html", "sub": "GIRLS VOLLEYBALL", "favicon": "logo-girls-64.png",
-            "nav": [("~/girls/index.html","Girls Home"),("~/girls/teams.html","Teams &amp; Tryouts"),("~/girls/coaches.html","Coaches"),
+            "nav": [("~/girls/index.html","Girls Home"),("~/girls/teams.html","Teams &amp; Tryouts"),("~/girls/calendar.html","Calendar"),("~/girls/coaches.html","Coaches"),
                     ("~/clinics.html","Clinics"),("~/private-training.html","Private Training")],
             "contact": "~/contact.html?program=girls"},
 }
@@ -52,12 +52,13 @@ def brand_logos(wing, size):
     g = f'<img src="~/images/logo-girls-64.png" alt="" width="{size}" height="{size}">'
     return {"club": b + g, "boys": b, "girls": g}[wing]
 
-def page(fname, wing, title, desc, body):
+def page(fname, wing, title, desc, body, head="", scripts=()):
     W = WINGS[wing]
     depth = fname.count("/")
     root = "../" * depth
     me = "~/" + fname
     LABELS = {"club": "Club Home", "boys": "Boys Club", "girls": "Girls Club"}
+    extra_js = "".join(f'\n  <script src="~/js/{js}"></script>' for js in scripts)
     CUR, ON = ' aria-current="page"', ' class="on"'
     nav = "\n".join(
         f'          <li><a href="{h}"{CUR if h == me else ""}>{t}</a></li>' for h, t in W["nav"])
@@ -81,7 +82,7 @@ def page(fname, wing, title, desc, body):
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600;700&family=Pacifico&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="~/css/styles.css">
+  <link rel="stylesheet" href="~/css/styles.css">{head}
 </head>
 <body class="theme-{wing}">
   <div class="wingbar">
@@ -136,6 +137,7 @@ def page(fname, wing, title, desc, body):
             <li><a href="~/private-training.html">Private Training</a></li>
             <li><a href="~/summer-camp.html">Summer Camp</a></li>
             <li><a href="~/coaches.html">Coaches</a></li>
+            <li><a href="~/calendar.html">Club Calendar</a></li>
             <li><a href="~/about.html">About The HBC</a></li>
           </ul>
         </div>
@@ -155,7 +157,7 @@ def page(fname, wing, title, desc, body):
       </div>
     </div>
   </footer>
-  <script src="~/js/main.js"></script>
+  <script src="~/js/main.js"></script>{extra_js}
 </body>
 </html>
 '''
@@ -801,4 +803,203 @@ f'''    <section class="hero">
 
 wing_pages("boys")
 wing_pages("girls")
+
+# =====================================================================
+# CALENDAR (public) + ADMIN
+# =====================================================================
+def calendar_body(program):
+    filters = "" if program else """
+          <div class="cal-seg" role="group" aria-label="Show program">
+            <button type="button" data-filter="everything" aria-pressed="true">Everything</button>
+            <button type="button" data-filter="boys">Boys</button>
+            <button type="button" data-filter="girls">Girls</button>
+          </div>"""
+    legend = "" if program else """
+        <ul class="cal-legend">
+          <li><span class="cal-dot p-all"></span>Whole club</li>
+          <li><span class="cal-dot p-boys"></span>HBC Boys</li>
+          <li><span class="cal-dot p-girls"></span>HBC Girls</li>
+        </ul>"""
+    note = {"": "Showing events for the whole club. Use the buttons to show only the boys or girls schedule.",
+            "boys": "Showing HBC Boys events plus whole-club events like clinics.",
+            "girls": "Showing HBC Girls events plus whole-club events like clinics."}[program]
+    return f"""    <section class="section">
+      <div class="container">
+        <div class="calendar" id="hbc-calendar" data-base="~/" data-program="{program}">
+          <div class="cal-toolbar">
+            <div class="cal-nav">
+              <button type="button" class="cal-btn" data-nav="prev" aria-label="Previous month">&#8249;</button>
+              <h2 class="cal-title" aria-live="polite">Calendar</h2>
+              <button type="button" class="cal-btn" data-nav="next" aria-label="Next month">&#8250;</button>
+              <button type="button" class="cal-btn cal-today" data-nav="today">Today</button>
+            </div>
+            <div class="cal-controls">{filters}
+              <div class="cal-seg" role="group" aria-label="View">
+                <button type="button" data-view="month" aria-pressed="true">Month</button>
+                <button type="button" data-view="list">List</button>
+              </div>
+            </div>
+          </div>
+          <p class="cal-note">{note} Click any event for time, location and details.</p>
+          <div class="cal-body"><p class="cal-empty">Loading calendar…</p></div>{legend}
+        </div>
+      </div>
+    </section>
+    <dialog id="cal-dialog" class="cal-dialog">
+      <button type="button" class="cal-close" aria-label="Close">&times;</button>
+      <div class="cal-d-body"></div>
+    </dialog>
+"""
+
+page("calendar.html", "club", "Calendar | The HBC Volleyball Club",
+ "Practices, tournaments, tryouts, clinics and club events for The HBC Volleyball Club in Huntington Beach.",
+ hero('Club <span class="script">Calendar</span>', "Practices, tournaments, tryouts, clinics and club events for the whole season.", "Schedule", "boys")
+ + calendar_body("") + cta("club"), scripts=("events.js", "calendar.js"))
+
+for w in ("boys", "girls"):
+    Name = "HBC Boys" if w == "boys" else "HBC Girls"
+    word = w.capitalize()
+    page(f"{w}/calendar.html", w, f"{Name} Calendar | The HBC Volleyball Club",
+     f"{Name} practices, tournaments and tryouts.",
+     hero(f'{word} <span class="script">Calendar</span>', f"{Name} practices, tournaments, tryouts and club events.", Name, w)
+     + calendar_body(w) + cta(w), scripts=("events.js", "calendar.js"))
+
+page("admin/index.html", "club", "Calendar Admin | The HBC Volleyball Club",
+ "Calendar editor for The HBC staff.",
+ """    <section class="page-hero adm-hero">
+      <div class="container">
+        <div>
+          <span class="eyebrow">Staff Only</span>
+          <h1>Calendar Admin</h1>
+          <p>Add, edit and remove events on the club, boys and girls calendars.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section adm">
+      <div class="container">
+        <div class="card adm-connect" id="adm-connect-card">
+          <div class="adm-connect-main">
+            <h3>1. Connect</h3>
+            <p>Paste your GitHub access key to edit the live calendar. <a href="#adm-help">How do I get a key?</a></p>
+            <div class="adm-row">
+              <input id="adm-token" type="password" placeholder="github_pat_…" autocomplete="off" spellcheck="false" aria-label="GitHub access key">
+              <button class="btn btn-dark" id="adm-connect" type="button">Connect</button>
+            </div>
+            <label class="adm-check"><input type="checkbox" id="adm-remember"> Remember this key on this device (only use on your own computer or phone)</label>
+            <div class="adm-connected-bar">
+              <span>Connected to GitHub.</span>
+              <button class="adm-link" id="adm-reload" type="button">Reload</button>
+              <button class="adm-link" id="adm-signout" type="button">Sign out</button>
+            </div>
+          </div>
+          <details class="adm-settings">
+            <summary>Advanced settings</summary>
+            <div class="adm-grid">
+              <label>GitHub owner<input id="s-owner"></label>
+              <label>Repository<input id="s-repo"></label>
+              <label>Branch<input id="s-branch"></label>
+              <label>Calendar file<input id="s-path"></label>
+            </div>
+            <button class="btn btn-dark" id="adm-settings-save" type="button">Save settings</button>
+          </details>
+          <p id="adm-status" class="adm-status" role="status"></p>
+        </div>
+
+        <div id="adm-editor" hidden>
+          <div class="adm-toolbar">
+            <h3>2. Edit events</h3>
+            <div class="adm-row wrap">
+              <button class="btn btn-dark" id="adm-add" type="button">+ Add event</button>
+              <input id="adm-search" type="search" placeholder="Search title, location, notes" aria-label="Search events">
+              <select id="adm-filter" aria-label="Filter by program">
+                <option value="any">All programs</option>
+                <option value="all">Whole club</option>
+                <option value="boys">HBC Boys</option>
+                <option value="girls">HBC Girls</option>
+              </select>
+              <label class="adm-check"><input type="checkbox" id="adm-past"> Show past events</label>
+            </div>
+          </div>
+          <div class="adm-table-wrap">
+            <table class="adm-table">
+              <thead><tr><th>Date</th><th>Event &amp; location</th><th>Time</th><th>Program</th><th>Type</th><th></th></tr></thead>
+              <tbody id="adm-rows"></tbody>
+            </table>
+          </div>
+          <p class="adm-count" id="adm-count"></p>
+
+          <details class="card adm-import">
+            <summary><strong>Add a whole season from a spreadsheet</strong></summary>
+            <p>Build your schedule in Excel or Google Sheets using the template columns, select the cells (including the header row), copy, and paste below.
+               For weekly practices, fill in <code>repeat_until</code> with the last date and the event will repeat every week on the same weekday.</p>
+            <p><button class="adm-link" id="adm-csv-template" type="button">Download the spreadsheet template (.csv)</button></p>
+            <textarea id="adm-csv" rows="7" placeholder="date,end_date,start,end,title,program,type,location,notes,repeat_until"></textarea>
+            <div class="adm-row"><button class="btn btn-dark" id="adm-csv-import" type="button">Add these events</button></div>
+            <p id="adm-csv-result" class="adm-status" role="status"></p>
+          </details>
+
+          <div class="adm-publish-bar">
+            <div>
+              <h3>3. Publish</h3>
+              <p><span id="adm-unsaved" class="adm-unsaved" hidden>You have unpublished changes.</span> Changes aren't visible to the public until you publish.</p>
+            </div>
+            <div class="adm-row wrap">
+              <button class="adm-link" id="adm-backup" type="button">Download backup</button>
+              <a class="adm-link" href="../calendar.html" target="_blank" rel="noopener">View public calendar</a>
+              <button class="btn btn-primary" id="adm-publish" type="button" disabled>Publish to website</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card adm-help" id="adm-help">
+          <h3>Getting your access key (one time)</h3>
+          <ol>
+            <li>Sign in to GitHub as <strong>rparker-sudo</strong> and open <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com/settings/personal-access-tokens/new</a>.</li>
+            <li>Name it <em>HBC Calendar</em> and pick an expiration (for example, 1 year).</li>
+            <li>Under <strong>Repository access</strong>, choose <strong>Only select repositories</strong> and pick <strong>The-HBC</strong>.</li>
+            <li>Under <strong>Permissions → Repository permissions</strong>, set <strong>Contents</strong> to <strong>Read and write</strong>.</li>
+            <li>Click <strong>Generate token</strong>, copy it (it starts with <code>github_pat_</code>) and paste it above.</li>
+          </ol>
+          <p>Treat the key like a password: it can change the website's files. Anyone else who helps with the schedule can make their own key the same way from an account with access to the repository.</p>
+        </div>
+      </div>
+    </section>
+
+    <dialog id="adm-dialog" class="cal-dialog adm-dialog">
+      <form id="adm-form" novalidate>
+        <h3 id="adm-dialog-title">Add event</h3>
+        <label>Title<input name="title" required placeholder="16s Practice, Fall Classic, Tryouts…"></label>
+        <div class="form-row">
+          <label>Program<select name="program"></select></label>
+          <label>Type<select name="type"></select></label>
+        </div>
+        <label>Location<input name="location" list="f-locations" placeholder="Gym, address or venue"></label>
+        <datalist id="f-locations"></datalist>
+        <div class="form-row">
+          <label>Date<input name="date" type="date" required></label>
+          <label>End date <small>(multi-day events)</small><input name="endDate" type="date"></label>
+        </div>
+        <label class="adm-check"><input type="checkbox" name="allDay"> All day (no set time)</label>
+        <div class="form-row" id="f-times">
+          <label>Start time<input name="start" type="time"></label>
+          <label>End time<input name="end" type="time"></label>
+        </div>
+        <label class="adm-check"><input type="checkbox" name="repeat"> Repeats every week</label>
+        <div id="f-repeat-opts">
+          <div class="form-row">
+            <label>Repeat until<input name="until" type="date"></label>
+            <label>Skip these dates <small>(holidays)</small><input name="skip" placeholder="2026-11-26, 2026-12-24"></label>
+          </div>
+        </div>
+        <label>Notes <small>(optional)</small><textarea name="notes" rows="3" placeholder="What to bring, check-in time, uniform…"></textarea></label>
+        <p id="f-error" class="adm-status err" role="alert"></p>
+        <div class="adm-row">
+          <button class="btn btn-dark" type="submit">Save event</button>
+          <button class="adm-link" type="button" id="f-cancel">Cancel</button>
+        </div>
+      </form>
+    </dialog>
+""", head='\n  <meta name="robots" content="noindex, nofollow">', scripts=("events.js", "admin.js"))
+
 print("ok")
