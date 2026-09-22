@@ -14,6 +14,12 @@ Static website for The HBC Volleyball Club, a boys and girls volleyball club in 
 
 Shared styles live in `css/styles.css` and behavior in `js/main.js`. There is no build step.
 
+## Branding
+- `images/logo-boys.png`: boys logo (black & white)
+- `images/logo-girls.png`: girls logo (black & pink)
+- Colors: black `#0a0a0a`, white, and girls-logo pink `#fb82ab` (deeper `#c2185b` for pink text on white). All are defined at the top of `css/styles.css`.
+- The pink wave lines and shark fin echo the girls logo.
+
 ## Run locally
 Open `index.html` in a browser, or serve the folder:
 
@@ -27,4 +33,4 @@ Any static host works (GitHub Pages, Netlify, Vercel). For GitHub Pages, enable 
 ## To update
 - Coach bios: replace the placeholder "Coach Name" cards in `coaches.html`.
 - Tryout and camp dates: update the notices in `teams.html` and `summer-camp.html`.
-- Photos: add images to `images/` and swap them in for the `.visual` placeholder blocks.
+- Photos: add images to `images/` and swap them in for the logo `.visual` blocks.
