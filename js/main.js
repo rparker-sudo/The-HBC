@@ -10,12 +10,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Highlight current page in nav
-  const here = location.pathname.split("/").pop() || "index.html";
-  document.querySelectorAll(".nav-links a").forEach((a) => {
-    if (a.getAttribute("href") === here) a.setAttribute("aria-current", "page");
-  });
-
   // Footer year
   document.querySelectorAll("[data-year]").forEach((el) => (el.textContent = new Date().getFullYear()));
 
@@ -38,14 +32,23 @@ document.addEventListener("DOMContentLoaded", () => {
   // Contact form: open the visitor's email app with the message pre-filled
   const form = document.querySelector("#contact-form");
   if (form) {
+    // Preselect the program when arriving from the boys or girls wing (?program=boys)
+    const program = new URLSearchParams(location.search).get("program");
+    const select = form.querySelector("[name=program]");
+    if (select && program) {
+      const match = [...select.options].find((o) => o.value.toLowerCase() === program.toLowerCase());
+      if (match) select.value = match.value;
+    }
+
     form.addEventListener("submit", (e) => {
       e.preventDefault();
       const d = new FormData(form);
-      const subject = `HBC Inquiry: ${d.get("interest")} — ${d.get("name")}`;
+      const subject = `HBC ${d.get("program")} Inquiry: ${d.get("interest")} — ${d.get("name")}`;
       const body = [
         `Name: ${d.get("name")}`,
         `Email: ${d.get("email")}`,
         `Phone: ${d.get("phone") || "-"}`,
+        `Program: ${d.get("program")}`,
         `Player age: ${d.get("age") || "-"}`,
         `Interested in: ${d.get("interest")}`,
         "",
