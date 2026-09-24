@@ -6,6 +6,15 @@ Edit page content here, then re-run; the .html files in the repo are the output.
 import os
 OUT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# Cache-busting: each CSS/JS link gets ?v=<hash of that file>, so browsers load new
+# versions right after a change instead of reusing a cached copy.
+import hashlib
+def ver(rel):
+    try:
+        return hashlib.sha1(open(os.path.join(OUT, rel), "rb").read()).hexdigest()[:10]
+    except OSError:
+        return "0"
+
 I = {
  "ball": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 2c-1.5 4-1 7.5 1.5 10.5M12 12c-3.5 1.5-7 1-10-1M12 12c2.5 2.5 3 6.5 2 10"/></svg>',
  "clip": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 11h6M9 15h4"/></svg>',
@@ -58,7 +67,7 @@ def page(fname, wing, title, desc, body, head="", scripts=()):
     root = "../" * depth
     me = "~/" + fname
     LABELS = {"club": "Club Home", "boys": "Boys Club", "girls": "Girls Club"}
-    extra_js = "".join(f'\n  <script src="~/js/{js}"></script>' for js in scripts)
+    extra_js = "".join(f'\n  <script src="~/js/{js}?v={ver("js/" + js)}"></script>' for js in scripts)
     CUR, ON = ' aria-current="page"', ' class="on"'
     nav = "\n".join(
         f'          <li><a href="{h}"{CUR if h == me else ""}>{t}</a></li>' for h, t in W["nav"])
@@ -82,7 +91,7 @@ def page(fname, wing, title, desc, body, head="", scripts=()):
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600;700&family=Pacifico&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="~/css/styles.css">{head}
+  <link rel="stylesheet" href="~/css/styles.css?v={ver("css/styles.css")}">{head}
 </head>
 <body class="theme-{wing}">
   <div class="wingbar">
@@ -157,7 +166,7 @@ def page(fname, wing, title, desc, body, head="", scripts=()):
       </div>
     </div>
   </footer>
-  <script src="~/js/main.js"></script>{extra_js}
+  <script src="~/js/main.js?v={ver("js/main.js")}"></script>{extra_js}
 </body>
 </html>
 '''
