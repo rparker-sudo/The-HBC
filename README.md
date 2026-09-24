@@ -27,6 +27,21 @@ A strip at the top of every page switches between the wings.
 - Admin: `admin/index.html` (not linked from the site). Sign in with a fine-grained GitHub token that has
   Contents read/write on this repo; the page edits `data/events.json` through the GitHub API and commits it,
   and GitHub Pages republishes within a minute or two. Supports weekly repeats, skip dates, spreadsheet (CSV) import and a JSON backup.
+- Admin tabs: **Calendar** (month view; click a practice to change *this practice only* or *this and all future practices*,
+  with coach/court/team conflict checks), **Schedule Builder**, **All events** (table + CSV import), **Help**.
+
+## Schedule builder
+- Setup is saved to `data/scheduler.json`: season phases (labeled date ranges) and holidays, gyms (courts + available
+  times, optionally per phase), coaches, teams (coaches, practices per week with optional per-phase numbers, length,
+  full courts or a shared court, or a set schedule that isn't flexible), and special rules.
+- Rules (Must or Prefer, optionally per phase): unavailable (coach/team/gym/court, days, times, optional date range),
+  team uses a gym or court, practice days, time window, no back-to-back days, coach max per day, coach travel time
+  between gyms, and two teams sharing one court.
+- `js/scheduler.js` is the engine: set schedules are placed first, then it tries many arrangements and keeps the one
+  that places the most practices with the best rule score. Coaches are never double-booked and a court holds at most
+  one full-court team or two shared-court teams. "Add to calendar" turns each phase's weekly pattern into weekly
+  events (holidays and dated unavailability skipped) and replaces earlier generated practices from the chosen date on.
+- The engine also runs in Node for testing: `const S = require("./js/scheduler.js")`.
 - The admin commits to the branch GitHub Pages serves (set under Advanced settings on the admin page).
   Pull before making code changes so you don't overwrite calendar edits.
 

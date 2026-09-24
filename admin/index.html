@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Calendar Admin | The HBC Volleyball Club</title>
-  <meta name="description" content="Calendar editor for The HBC staff.">
+  <meta name="description" content="Calendar editor and practice schedule builder for The HBC staff.">
   <link rel="icon" href="../images/logo-boys-64.png" type="image/png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -46,7 +46,7 @@
         <div>
           <span class="eyebrow">Staff Only</span>
           <h1>Calendar Admin</h1>
-          <p>Add, edit and remove events on the club, boys and girls calendars.</p>
+          <p>Build the practice schedule, then fine-tune any practice on the calendar.</p>
         </div>
       </div>
     </section>
@@ -70,11 +70,12 @@
           </div>
           <details class="adm-settings">
             <summary>Advanced settings</summary>
-            <div class="adm-grid">
+            <div class="adm-grid five">
               <label>GitHub owner<input id="s-owner"></label>
               <label>Repository<input id="s-repo"></label>
               <label>Branch<input id="s-branch"></label>
               <label>Calendar file<input id="s-path"></label>
+              <label>Builder setup file<input id="s-configPath"></label>
             </div>
             <button class="btn btn-dark" id="adm-settings-save" type="button">Save settings</button>
           </details>
@@ -82,8 +83,24 @@
         </div>
 
         <div id="adm-editor" hidden>
+          <div class="adm-tabs" role="tablist">
+            <button type="button" role="tab" data-tab="calendar" aria-selected="true">Calendar</button>
+            <button type="button" role="tab" data-tab="builder" aria-selected="false">Schedule Builder</button>
+            <button type="button" role="tab" data-tab="list" aria-selected="false">All events</button>
+            <button type="button" role="tab" data-tab="help" aria-selected="false">Help</button>
+          </div>
+
+          <div data-panel="calendar">
+            <div id="ac-root"></div>
+          </div>
+
+          <div data-panel="builder" hidden>
+            <div id="sb-root"></div>
+          </div>
+
+          <div data-panel="list" hidden>
           <div class="adm-toolbar">
-            <h3>2. Edit events</h3>
+            <h3>All events</h3>
             <div class="adm-row wrap">
               <button class="btn btn-dark" id="adm-add" type="button">+ Add event</button>
               <input id="adm-search" type="search" placeholder="Search title, location, notes" aria-label="Search events">
@@ -103,7 +120,6 @@
             </table>
           </div>
           <p class="adm-count" id="adm-count"></p>
-
           <details class="card adm-import">
             <summary><strong>Add a whole season from a spreadsheet</strong></summary>
             <p>Build your schedule in Excel or Google Sheets using the template columns, select the cells (including the header row), copy, and paste below.
@@ -113,10 +129,26 @@
             <div class="adm-row"><button class="btn btn-dark" id="adm-csv-import" type="button">Add these events</button></div>
             <p id="adm-csv-result" class="adm-status" role="status"></p>
           </details>
+          </div>
 
+          <div data-panel="help" hidden>
+            <div class="card">
+              <h3>How the schedule builder works</h3>
+              <ol>
+                <li><strong>Season phases:</strong> label your three phases and set their dates. Add holidays so no practices land on them.</li>
+                <li><strong>Gyms &amp; courts:</strong> add each gym, its number of courts and the times you can use it (times can be different per phase).</li>
+                <li><strong>Coaches</strong> and <strong>teams:</strong> give each team its coaches, practices per week, practice length and court needs. Mark a team as a <em>set schedule</em> if its times are already decided.</li>
+                <li><strong>Special rules:</strong> add anything the schedule must or should follow.</li>
+                <li><strong>Generate</strong>, review the weekly pattern, then <strong>Add to calendar</strong>.</li>
+                <li>On the <strong>Calendar</strong> tab, click any practice to change just that practice, or that practice and all future ones.</li>
+                <li>Click <strong>Publish to website</strong> to make everything live.</li>
+              </ol>
+              <p>A coach is never booked in two places at once, and a court never holds more than one full-court team (or two shared-court teams) at a time. Conflicts are shown in red on the calendar.</p>
+            </div>
+          </div>
           <div class="adm-publish-bar">
             <div>
-              <h3>3. Publish</h3>
+              <h3>Publish</h3>
               <p><span id="adm-unsaved" class="adm-unsaved" hidden>You have unpublished changes.</span> Changes aren't visible to the public until you publish.</p>
             </div>
             <div class="adm-row wrap">
@@ -125,6 +157,7 @@
               <button class="btn btn-primary" id="adm-publish" type="button" disabled>Publish to website</button>
             </div>
           </div>
+
         </div>
 
         <div class="card adm-help" id="adm-help">
@@ -138,6 +171,7 @@
           </ol>
           <p>Treat the key like a password: it can change the website's files. Anyone else who helps with the schedule can make their own key the same way from an account with access to the repository.</p>
         </div>
+
       </div>
     </section>
 
@@ -172,6 +206,38 @@
         <div class="adm-row">
           <button class="btn btn-dark" type="submit">Save event</button>
           <button class="adm-link" type="button" id="f-cancel">Cancel</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="occ-dialog" class="cal-dialog adm-dialog">
+      <form id="occ-form" novalidate onsubmit="return false">
+        <button type="button" class="cal-close" id="occ-close" aria-label="Close">&times;</button>
+        <h3 id="occ-title">Edit practice</h3>
+        <p id="occ-series" class="sb-hint"></p>
+        <label>Title<input name="title" required></label>
+        <div class="form-row">
+          <label>Date<input name="date" type="date" required></label>
+          <div class="form-row">
+            <label>Start<input name="start" type="time"></label>
+            <label>End<input name="end" type="time"></label>
+          </div>
+        </div>
+        <div class="form-row">
+          <label>Gym<select name="gym"></select></label>
+          <label>Court(s)<input name="courts" placeholder="1 or 1, 2"></label>
+        </div>
+        <label>Location / address<input name="location"></label>
+        <div><span class="sb-sub">Coaches</span><div id="occ-coaches" class="sb-days"></div></div>
+        <label>Notes<textarea name="notes" rows="2"></textarea></label>
+        <p id="occ-error" class="adm-status err" role="alert"></p>
+        <div class="adm-row wrap">
+          <button class="btn btn-dark" type="button" id="occ-one">Save this practice only</button>
+          <button class="btn btn-primary" type="button" id="occ-future">Save this &amp; all future practices</button>
+        </div>
+        <div class="adm-row wrap">
+          <button class="adm-link danger" type="button" id="occ-cancel-one">Cancel this practice</button>
+          <button class="adm-link danger" type="button" id="occ-cancel-future">Cancel this &amp; all future practices</button>
         </div>
       </form>
     </dialog>
@@ -227,6 +293,9 @@
   </footer>
   <script src="../js/main.js"></script>
   <script src="../js/events.js"></script>
+  <script src="../js/scheduler.js"></script>
   <script src="../js/admin.js"></script>
+  <script src="../js/admin-calendar.js"></script>
+  <script src="../js/admin-scheduler.js"></script>
 </body>
 </html>

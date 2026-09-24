@@ -34,6 +34,8 @@
     return ev.program === state.filter || ev.program === "all";
   }
 
+  const place = (o) => [o.venue, o.court].filter(Boolean).join(" · ") || o.location || "";
+
   function chip(o) {
     return el("button", { class: `cal-chip p-${o.program || "all"} t-${o.type || "event"}`, type: "button", onclick: () => openDetails(o) },
       o.start ? el("span", { class: "cal-chip-time" }, E.formatTime(o.start)) : null, o.title);
@@ -76,10 +78,11 @@
             el("strong", {}, o.title),
             el("small", {}, [
               multi ? `${E.formatDate(o.occStart)} – ${E.formatDate(o.occEnd)}` : E.timeRange(o),
-              o.location ? ` · ${o.location}` : "",
+              place(o) ? ` · ${place(o)}` : "",
             ].join(""))),
           el("span", { class: "cal-tags" },
             el("span", { class: "cal-tag" }, E.TYPES[o.type] || "Event"),
+            o.phaseName ? el("span", { class: "cal-tag" }, o.phaseName) : null,
             fixedProgram ? null : el("span", { class: `cal-tag prog p-${o.program || "all"}` }, E.PROGRAMS[o.program] || "Whole Club")))));
     }
     return list;
@@ -105,17 +108,20 @@
     return [
       el("p", { class: "cal-d-tags" },
         el("span", { class: "cal-tag" }, E.TYPES[o.type] || "Event"),
-        el("span", { class: `cal-tag prog p-${o.program || "all"}` }, E.PROGRAMS[o.program] || "Whole Club")),
+        el("span", { class: `cal-tag prog p-${o.program || "all"}` }, E.PROGRAMS[o.program] || "Whole Club"),
+        o.phaseName ? el("span", { class: "cal-tag" }, o.phaseName) : null),
       el("h3", {}, o.title),
       el("p", {}, el("strong", {}, "When: "), when, multi ? "" : ` · ${E.timeRange(o)}`),
-      o.location ? el("p", {}, el("strong", {}, "Where: "),
+      (o.venue || o.court) ? el("p", {}, el("strong", {}, "Gym: "), [o.venue, o.court].filter(Boolean).join(" · ")) : null,
+      o.location ? el("p", {}, el("strong", {}, o.venue ? "Address: " : "Where: "),
         el("a", { href: "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(o.location), target: "_blank", rel: "noopener" }, o.location)) : null,
+      o.coaches && o.coaches.length ? el("p", { class: "cal-d-coaches" }, el("strong", {}, o.coaches.length > 1 ? "Coaches: " : "Coach: "), o.coaches.join(", ")) : null,
       o.notes ? el("p", { class: "cal-d-notes" }, o.notes) : null,
     ];
   }
 
   function show(content) {
-    dialog.querySelector(".cal-d-body").replaceChildren(...content);
+    dialog.querySelector(".cal-d-body").replaceChildren(...content.filter(Boolean));
     dialog.showModal ? dialog.showModal() : dialog.setAttribute("open", "");
   }
   const openDetails = (o) => show(detailRows(o));

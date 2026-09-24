@@ -5,7 +5,11 @@
   const $ = (s, r = document) => r.querySelector(s);
   const SETTINGS_KEY = "hbc-admin-settings";
   const TOKEN_KEY = "hbc-admin-token";
-  const DEFAULTS = { owner: "rparker-sudo", repo: "The-HBC", branch: "claude/gallant-knuth-wakdzl", path: "data/events.json" };
+  const DEFAULTS = { owner: "rparker-sudo", repo: "The-HBC", branch: "claude/gallant-knuth-wakdzl", path: "data/events.json", configPath: "data/scheduler.json" };
+  const emptyConfig = () => ({
+    season: { phases: [1, 2, 3].map((n) => ({ id: "p" + n, name: `Phase ${n}`, start: "", end: "" })), blackouts: [] },
+    gyms: [], coaches: [], teams: [], rules: [],
+  });
 
   const store = {
     get(k) { try { return localStorage.getItem(k); } catch { return null; } },
@@ -16,7 +20,9 @@
   let settings = { ...DEFAULTS };
   try { Object.assign(settings, JSON.parse(store.get(SETTINGS_KEY) || "{}")); } catch { /* ignore */ }
 
-  const state = { events: [], sha: null, token: "", connected: false, dirty: false, editingId: null };
+  const state = { events: [], sha: null, config: emptyConfig(), configSha: null, token: "", connected: false,
+    dirty: false, dirtyEvents: false, dirtyConfig: false, editingId: null };
+  const renderers = [];
 
   const el = (tag, attrs = {}, ...kids) => {
     const n = document.createElement(tag);
@@ -35,7 +41,11 @@
     s.textContent = msg;
     s.className = "adm-status " + kind;
   }
-  function setDirty(v) {
+  function setDirty(v, kind = "events") {
+    if (!v) { state.dirtyEvents = state.dirtyConfig = false; }
+    else if (kind === "config") state.dirtyConfig = true;
+    else state.dirtyEvents = true;
+    v = state.dirtyEvents || state.dirtyConfig;
     state.dirty = v;
     $("#adm-publish").disabled = !v || !state.connected;
     $("#adm-unsaved").hidden = !v;
@@ -52,7 +62,7 @@
   const b64decode = (b64) => new TextDecoder().decode(Uint8Array.from(atob(b64.replace(/\s/g, "")), (c) => c.charCodeAt(0)));
 
   // ---------- GitHub ----------
-  const apiUrl = () => `https://api.github.com/repos/${settings.owner}/${settings.repo}/contents/${settings.path}`;
+  const apiUrl = (path = settings.path) => `https://api.github.com/repos/${settings.owner}/${settings.repo}/contents/${path}`;
   async function gh(url, opts = {}) {
     const res = await fetch(url, {
       ...opts,
@@ -82,13 +92,24 @@
         state.sha = file.sha;
         if (!state.dirty) state.events = (JSON.parse(b64decode(file.content)).events || []);
       }
+      // scheduler setup (gyms, coaches, teams, rules)
+      const cres = await gh(`${apiUrl(settings.configPath)}?ref=${encodeURIComponent(settings.branch)}`);
+      if (cres.ok) {
+        const cfile = await cres.json();
+        state.configSha = cfile.sha;
+        if (!state.dirtyConfig) state.config = { ...emptyConfig(), ...JSON.parse(b64decode(cfile.content)) };
+      } else if (cres.status === 404) {
+        state.configSha = null;
+      } else {
+        throw new Error(`Couldn't load the schedule builder setup (${cres.status}). Try again in a minute.`);
+      }
       state.connected = true;
       if ($("#adm-remember").checked) store.set(TOKEN_KEY, token); else store.del(TOKEN_KEY);
       $("#adm-connect-card").classList.add("connected");
       $("#adm-editor").hidden = false;
       status(`Connected. Editing the live calendar (${state.events.length} event${state.events.length === 1 ? "" : "s"}).`, "ok");
       setDirty(state.dirty);
-      renderTable();
+      refresh();
     } catch (err) {
       state.connected = false;
       status(err.message || "Couldn't connect. Check your internet connection and try again.", "err");
@@ -98,7 +119,7 @@
   function disconnect() {
     if (state.dirty && !confirm("You have unpublished changes. Sign out anyway? They will be lost.")) return;
     store.del(TOKEN_KEY);
-    Object.assign(state, { token: "", connected: false, sha: null, dirty: false });
+    Object.assign(state, { token: "", connected: false, sha: null, configSha: null, dirty: false, dirtyEvents: false, dirtyConfig: false });
     $("#adm-token").value = "";
     $("#adm-connect-card").classList.remove("connected");
     $("#adm-editor").hidden = true;
@@ -110,20 +131,24 @@
     const btn = $("#adm-publish");
     btn.disabled = true;
     status("Publishing to the website…");
-    const data = { updated: E.toKey(new Date()), events: sortEvents(state.events) };
-    const body = {
-      message: `Update calendar (${state.events.length} events)`,
-      content: b64encode(JSON.stringify(data, null, 2) + "\n"),
-      branch: settings.branch,
-    };
-    if (state.sha) body.sha = state.sha;
-    try {
-      const res = await gh(apiUrl(), { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    async function put(path, data, sha, message) {
+      const body = { message, content: b64encode(JSON.stringify(data, null, 2) + "\n"), branch: settings.branch };
+      if (sha) body.sha = sha;
+      const res = await gh(apiUrl(path), { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
       if (res.status === 409 || res.status === 422) throw new Error("The calendar was changed somewhere else since you opened it. Click Reload to get the latest version, then make your changes again.");
       if (res.status === 403 || res.status === 404) throw new Error("This key can't save changes. When creating it, set Contents to \"Read and write\".");
       if (!res.ok) throw new Error(`GitHub returned an error (${res.status}). Your changes are still here, so try Publish again.`);
-      const out = await res.json();
-      state.sha = out.content.sha;
+      return (await res.json()).content.sha;
+    }
+    try {
+      if (state.dirtyConfig) {
+        state.configSha = await put(settings.configPath, state.config, state.configSha, "Update schedule builder setup");
+        state.dirtyConfig = false;
+      }
+      if (state.dirtyEvents) {
+        const data = { updated: E.toKey(new Date()), events: sortEvents(state.events) };
+        state.sha = await put(settings.path, data, state.sha, `Update calendar (${state.events.length} events)`);
+      }
       setDirty(false);
       status("Published! The public calendar updates within 1–2 minutes (refresh the page to see it).", "ok");
     } catch (err) {
@@ -180,7 +205,7 @@
     if (!confirm(`Delete "${ev.title}" on ${ev.date}${ev.repeat === "weekly" ? " (and all its repeats)" : ""}?`)) return;
     state.events = state.events.filter((x) => x.id !== ev.id);
     setDirty(true);
-    renderTable();
+    refresh();
   }
 
   // ---------- editor ----------
@@ -195,7 +220,7 @@
 
   function openEditor(ev) {
     state.editingId = ev && ev.id ? ev.id : null;
-    const v = ev || { program: "all", type: "practice" };
+    const v = ev || { program: "all", type: "practice", date: arguments[1] || "" };
     $("#adm-dialog-title").textContent = state.editingId ? "Edit event" : "Add event";
     form.reset();
     form.title.value = v.title || "";
@@ -260,12 +285,19 @@
       if (skip.some((s) => !s)) return err("Dates to skip should look like 2026-11-26 or 11/26/2026, separated by commas.");
       ev.skip = skip;
     }
-    if (state.editingId) state.events = state.events.map((x) => (x.id === state.editingId ? ev : x));
+    if (state.editingId) state.events = state.events.map((x) => (x.id === state.editingId ? keepMeta(x, ev) : x));
     else state.events.push(ev);
     dlg.close();
     setDirty(true);
-    renderTable();
+    refresh();
     status(`Saved "${ev.title}". Click "Publish to website" when you're done editing.`, "ok");
+  }
+
+  // keep scheduler details (team, coaches, gym, courts, phase) when an event is edited in the form
+  function keepMeta(old, ev) {
+    const meta = {};
+    for (const k of ["team", "coachIds", "coaches", "gym", "courts", "share", "court", "venue", "phase", "phaseName", "source", "series", "overrideOf", "overrideDate"]) if (old[k] !== undefined) meta[k] = old[k];
+    return { ...meta, ...ev };
   }
 
   // ---------- CSV import ----------
@@ -351,7 +383,7 @@
     });
     state.events.push(...added);
     if (added.length) setDirty(true);
-    renderTable();
+    refresh();
     out.className = "adm-status " + (problems.length ? "err" : "ok");
     out.textContent = `Added ${added.length} event${added.length === 1 ? "" : "s"}.` + (problems.length ? ` Skipped ${problems.length}: ${problems.join("; ")}.` : " Review them below, then Publish.");
     if (added.length && !problems.length) $("#adm-csv").value = "";
@@ -369,7 +401,17 @@
   ].join("\n") + "\n";
 
   // ---------- wire up ----------
+  function refresh() { renderTable(); for (const fn of renderers) fn(); }
+
+  // ---------- tabs ----------
+  function showTab(name) {
+    document.querySelectorAll("[data-tab]").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.tab === name)));
+    document.querySelectorAll("[data-panel]").forEach((p) => { p.hidden = p.dataset.panel !== name; });
+    for (const fn of renderers) fn();
+  }
+
   function init() {
+    document.querySelectorAll("[data-tab]").forEach((b) => b.addEventListener("click", () => showTab(b.dataset.tab)));
     // settings
     for (const k of Object.keys(DEFAULTS)) $(`#s-${k}`).value = settings[k];
     $("#adm-settings-save").addEventListener("click", () => {
@@ -396,6 +438,7 @@
     for (const [k, v] of Object.entries(E.TYPES)) form.type.append(el("option", { value: k }, v));
     for (const [k, v] of Object.entries(E.PROGRAMS)) form.program.append(el("option", { value: k }, v));
 
+    window.HBCAdmin = { state, el, status, setDirty, refresh, newId, openEditor, showTab, onRefresh: (fn) => renderers.push(fn), emptyConfig };
     const saved = store.get(TOKEN_KEY);
     if (saved) { $("#adm-token").value = saved; $("#adm-remember").checked = true; connect(); }
   }
