@@ -148,6 +148,28 @@
       addBtn("+ Add coach", () => { coaches.push({ id: A.newId(), name: "" }); changed(); rerender(); }));
   }
 
+  // Which team panels / schedule editors are open (kept across redraws and visits on this device)
+  const OPEN_KEY = "hbc-sb-open";
+  let openSet;
+  try { openSet = new Set(JSON.parse(localStorage.getItem(OPEN_KEY) || "[]")); } catch { openSet = new Set(); }
+  function setOpen(id, open) {
+    if (open) openSet.add(id); else openSet.delete(id);
+    try { localStorage.setItem(OPEN_KEY, JSON.stringify([...openSet])); } catch { /* storage blocked */ }
+  }
+  // <details> panel whose open state is remembered under `id`
+  function panel(id, cls, summaryKids, ...body) {
+    const d = el("details", { class: cls, open: openSet.has(id) ? "" : null }, el("summary", {}, ...summaryKids), ...body);
+    d.addEventListener("toggle", () => setOpen(id, d.open));
+    return d;
+  }
+  function slotSummary(slots) {
+    const phases = cfg().season.phases;
+    const byPhase = phases.map((p) => [p, slots.filter((s) => !s.phase || s.phase === p.id)]).filter(([, l]) => l.length);
+    const count = (l) => l.reduce((a, s) => a + (s.days || []).length, 0);
+    if (!slots.length) return "no times yet";
+    return byPhase.map(([p, l]) => `${p.name || p.id}: ${count(l)}/wk`).join(" · ") || `${count(slots)}/wk`;
+  }
+
   function teamsSection() {
     const teams = cfg().teams;
     const phases = cfg().season.phases;
@@ -168,7 +190,9 @@
         t.courtUse === "shared" ? null : field("Courts needed", text(t, "courts", { type: "number", min: 1, max: 6, placeholder: "1" }), "narrow"));
       let body;
       if (t.fixed) {
-        body = el("div", {}, el("p", { class: "sb-sub" }, "Set practice times (placed first; the generator schedules everyone else around them)"),
+        body = panel(`${t.id}:slots`, "sb-generated sb-sched",
+          [el("span", { class: "sb-sub" }, "Set practice times"), el("small", { class: "sb-sum" }, slotSummary(t.fixedSlots || []))],
+          el("p", { class: "sb-hint" }, "Placed first; the generator schedules everyone else around them."),
           ...slotRows(t, "fixedSlots", "No set times yet."), addSlot(t, "fixedSlots", "+ Add set practice time"));
       } else {
         t.perPhase ||= {};
@@ -178,12 +202,12 @@
             field("Practices per week", text(t, "perWeek", { type: "number", min: 0, max: 7, placeholder: "2" }), "narrow"),
             ...phases.map((p) => field(`${p.name || p.id} (optional)`, text(t.perPhase, p.id, { type: "number", min: 0, max: 7, placeholder: "same" }), "narrow")),
             field("Practice length (minutes)", text(t, "minutes", { type: "number", min: 30, step: 15, placeholder: "120" }), "narrow")),
-          el("div", { class: "sb-generated" },
-            el("div", { class: "sb-gen-head" },
-              el("span", { class: "sb-sub" }, "Generated schedule (edit any time)"),
-              gen ? el("button", { type: "button", class: "adm-link", title: "Keep these times: the team becomes a set schedule and won't be moved by the generator",
+          panel(`${t.id}:slots`, "sb-generated sb-sched",
+            [el("span", { class: "sb-sub" }, "Generated schedule (edit any time)"), el("small", { class: "sb-sum" }, slotSummary(t.generatedSlots || []))],
+            gen ? el("div", { class: "sb-gen-head" }, el("span", {}),
+              el("button", { type: "button", class: "adm-link", title: "Keep these times: the team becomes a set schedule and won't be moved by the generator",
                 onclick: () => { if (!confirm(`Lock the times for ${t.name || "this team"}? The team becomes a set schedule, and generating again won't move it.`)) return;
-                  t.fixed = true; t.fixedSlots = [...(t.fixedSlots || []), ...t.generatedSlots]; t.generatedSlots = []; changed(); rerender(); } }, "Lock as set schedule") : null),
+                  t.fixed = true; t.fixedSlots = [...(t.fixedSlots || []), ...t.generatedSlots]; t.generatedSlots = []; changed(); rerender(); } }, "Lock as set schedule")) : null,
             ...slotRows(t, "generatedSlots", "Click Generate below to fill this in. You can then change any day, time, gym or court here."),
             addSlot(t, "generatedSlots", "+ Add practice time")));
       }
@@ -193,10 +217,23 @@
           if (t.customPriority && !(t.courtPriority || []).length) t.courtPriority = S.priorityList(cfg()).map((x) => ({ gym: x.gym, court: x.court }));
           rerender(); }), "narrow"),
         t.customPriority && cfg().gyms.length ? priorityEditor(t, "courtPriority", true) : null);
-      return el("div", { class: `sb-item sb-team p-${t.program || "all"}` }, head, el("p", { class: "sb-sub" }, "Coaches"), cfg().coaches.length ? coachBox : el("small", {}, "Add coaches above first."), courtUse, prio, body);
+      const coachNames = t.coaches.map((id) => (cfg().coaches.find((c) => c.id === id) || {}).name).filter(Boolean);
+      const prog = { boys: "HBC Boys", girls: "HBC Girls", all: "Whole club" }[t.program] || "";
+      const summary = [
+        el("span", { class: "sb-team-name" }, t.name || "New team"),
+        el("span", { class: `cal-tag prog p-${t.program || "all"}` }, prog),
+        el("span", { class: "cal-tag" }, t.fixed ? "Set schedule" : "Flexible"),
+        el("small", { class: "sb-sum" }, [coachNames.join(", ") || "No coaches", slotSummary(t.fixed ? (t.fixedSlots || []) : (t.generatedSlots || []))].join(" · ")),
+      ];
+      return panel(t.id, `sb-item sb-team p-${t.program || "all"}`, summary,
+        el("div", { class: "sb-team-body" }, head, el("p", { class: "sb-sub" }, "Coaches"), cfg().coaches.length ? coachBox : el("small", {}, "Add coaches above first."), courtUse, prio, body));
     });
-    return section("4. Teams", "Pick each team's coaches and how often they practice. Leave a phase blank to use the normal number, or enter 0 for no practices in that phase.",
-      ...cards, addBtn("+ Add team", () => { teams.push({ id: A.newId(), name: "", program: "boys", coaches: [], perWeek: 2, minutes: 120, courts: 1, courtUse: "", fixed: false, perPhase: {} }); changed(); rerender(); }));
+    const allIds = teams.flatMap((t) => [t.id, `${t.id}:slots`]);
+    const bulk = teams.length ? el("div", { class: "adm-row wrap sb-bulk" },
+      el("button", { type: "button", class: "adm-link", onclick: () => { allIds.forEach((id) => setOpen(id, true)); rerender(); } }, "Expand all"),
+      el("button", { type: "button", class: "adm-link", onclick: () => { allIds.forEach((id) => setOpen(id, false)); rerender(); } }, "Collapse all")) : null;
+    return section("4. Teams", "Click a team to open it. Pick each team's coaches and how often they practice. Leave a phase blank to use the normal number, or enter 0 for no practices in that phase.",
+      bulk, ...cards, addBtn("+ Add team", () => { const id = A.newId(); teams.push({ id, name: "", program: "boys", coaches: [], perWeek: 2, minutes: 120, courts: 1, courtUse: "", fixed: false, perPhase: {} }); setOpen(id, true); changed(); rerender(); }));
   }
 
   const RULES = {
