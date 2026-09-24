@@ -1,0 +1,598 @@
+{
+  "season": {
+    "phases": [
+      {
+        "id": "p1",
+        "name": "14U Girls and Boys",
+        "start": "2026-09-24",
+        "end": "2026-11-22"
+      },
+      {
+        "id": "p2",
+        "name": "All Teams (Winter)",
+        "start": "2026-11-22",
+        "end": "2027-01-24"
+      },
+      {
+        "id": "p3",
+        "name": "Girls and 14U Boys",
+        "start": "2027-01-24",
+        "end": "2027-05-01"
+      },
+      {
+        "id": "mufy7lyg578nq",
+        "name": "All Teams (Spring)",
+        "start": "2027-05-01",
+        "end": "2027-07-03"
+      }
+    ],
+    "blackouts": []
+  },
+  "gyms": [
+    {
+      "id": "mufy9950pxrdp",
+      "name": "Liberty Christian",
+      "address": "7661 Warner ave, Huntington Beach",
+      "courts": 2,
+      "hours": [
+        {
+          "days": [
+            1
+          ],
+          "start": "18:30",
+          "end": "21:45",
+          "phase": ""
+        },
+        {
+          "days": [
+            2,
+            4
+          ],
+          "start": "20:00",
+          "end": "21:45",
+          "phase": ""
+        }
+      ]
+    },
+    {
+      "id": "mufya8stx16on",
+      "name": "HBC Gym",
+      "address": "7661 Windfield dr, Huntington Beach",
+      "courts": 2,
+      "hours": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "start": "16:00",
+          "end": "21:00",
+          "phase": ""
+        },
+        {
+          "days": [
+            6,
+            0
+          ],
+          "start": "09:00",
+          "end": "21:00",
+          "phase": ""
+        }
+      ]
+    },
+    {
+      "id": "mufybn675nyev",
+      "name": "Marina High School",
+      "address": "15871 Springdale st.",
+      "courts": 3,
+      "hours": [
+        {
+          "days": [
+            0
+          ],
+          "start": "16:30",
+          "end": "21:00",
+          "phase": ""
+        }
+      ]
+    }
+  ],
+  "coaches": [
+    {
+      "id": "mufycfdyakwku",
+      "name": "Darrick"
+    },
+    {
+      "id": "mufycjm8yga6w",
+      "name": "Joseph"
+    },
+    {
+      "id": "mufyco8x0uoka",
+      "name": "Ryan"
+    },
+    {
+      "id": "mufycql5b1o74",
+      "name": "Jake"
+    },
+    {
+      "id": "mufycu4h28gg1",
+      "name": "Carson"
+    },
+    {
+      "id": "mufyd4cjw3erm",
+      "name": "Derek"
+    },
+    {
+      "id": "mufyd8phcr3te",
+      "name": "Chris"
+    },
+    {
+      "id": "mufyddarx5n30",
+      "name": "Justin"
+    },
+    {
+      "id": "mufydgxr4mtiv",
+      "name": "Jordan"
+    },
+    {
+      "id": "mufydo8qqfm92",
+      "name": "Farhad"
+    },
+    {
+      "id": "mufydritx9a5t",
+      "name": "Caroline"
+    },
+    {
+      "id": "mufydvhu02li1",
+      "name": "Megan"
+    },
+    {
+      "id": "mufye7jmk1o0d",
+      "name": "Kayelyn"
+    },
+    {
+      "id": "mufyucpohsemb",
+      "name": "Dominique"
+    }
+  ],
+  "teams": [
+    {
+      "id": "mufyegemcgk77",
+      "name": "18 Black Rhyno",
+      "program": "boys",
+      "coaches": [
+        "mufyco8x0uoka",
+        "mufyd4cjw3erm"
+      ],
+      "perWeek": 2,
+      "minutes": 120,
+      "courts": 1,
+      "courtUse": "shared",
+      "fixed": true,
+      "perPhase": {},
+      "fixedSlots": [
+        {
+          "days": [
+            4,
+            1
+          ],
+          "start": "20:00",
+          "end": "21:45",
+          "gym": "mufy9950pxrdp",
+          "courts": "1",
+          "phase": "p1"
+        },
+        {
+          "days": [
+            4,
+            1
+          ],
+          "start": "20:00",
+          "end": "21:45",
+          "gym": "mufy9950pxrdp",
+          "courts": "1",
+          "phase": "p2"
+        },
+        {
+          "days": [
+            0
+          ],
+          "start": "18:00",
+          "end": "20:00",
+          "gym": "mufybn675nyev",
+          "courts": "1",
+          "phase": "p2"
+        },
+        {
+          "days": [
+            0
+          ],
+          "start": "18:00",
+          "end": "20:00",
+          "gym": "mufybn675nyev",
+          "courts": "1",
+          "phase": "p1"
+        }
+      ]
+    },
+    {
+      "id": "mufyhfqh9ouvv",
+      "name": "17 Dreamcoat",
+      "program": "boys",
+      "coaches": [
+        "mufyd8phcr3te",
+        "mufycjm8yga6w"
+      ],
+      "perWeek": 2,
+      "minutes": 120,
+      "courts": 1,
+      "courtUse": "shared",
+      "fixed": true,
+      "perPhase": {},
+      "fixedSlots": [
+        {
+          "days": [
+            4,
+            1
+          ],
+          "start": "20:00",
+          "end": "21:45",
+          "gym": "mufy9950pxrdp",
+          "courts": "1",
+          "phase": "p1"
+        },
+        {
+          "days": [
+            4,
+            1
+          ],
+          "start": "20:00",
+          "end": "21:45",
+          "gym": "mufy9950pxrdp",
+          "courts": "1",
+          "phase": "p2"
+        },
+        {
+          "days": [
+            0
+          ],
+          "start": "18:00",
+          "end": "20:00",
+          "gym": "mufybn675nyev",
+          "courts": "1",
+          "phase": "p1"
+        },
+        {
+          "days": [
+            0
+          ],
+          "start": "18:00",
+          "end": "20:00",
+          "gym": "mufybn675nyev",
+          "courts": "1",
+          "phase": "p2"
+        }
+      ]
+    },
+    {
+      "id": "mufyizwrr81ah",
+      "name": "15/16 Sina Dream Warrior",
+      "program": "boys",
+      "coaches": [
+        "mufycfdyakwku",
+        "mufyddarx5n30"
+      ],
+      "perWeek": 2,
+      "minutes": 120,
+      "courts": 1,
+      "courtUse": "",
+      "fixed": true,
+      "perPhase": {},
+      "fixedSlots": [
+        {
+          "days": [
+            0
+          ],
+          "start": "17:45",
+          "end": "20:00",
+          "gym": "mufybn675nyev",
+          "courts": "2",
+          "phase": "p1"
+        },
+        {
+          "days": [
+            0
+          ],
+          "start": "17:45",
+          "end": "20:00",
+          "gym": "mufybn675nyev",
+          "courts": "2",
+          "phase": "p2"
+        },
+        {
+          "days": [
+            1
+          ],
+          "start": "19:30",
+          "end": "21:30",
+          "gym": "mufy9950pxrdp",
+          "courts": "2",
+          "phase": "p1"
+        },
+        {
+          "days": [
+            1
+          ],
+          "start": "19:30",
+          "end": "21:30",
+          "gym": "mufy9950pxrdp",
+          "courts": "2",
+          "phase": "p2"
+        },
+        {
+          "days": [
+            2
+          ],
+          "start": "19:45",
+          "end": "21:30",
+          "gym": "mufy9950pxrdp",
+          "courts": "1",
+          "phase": "p1"
+        },
+        {
+          "days": [
+            2
+          ],
+          "start": "19:45",
+          "end": "21:30",
+          "gym": "mufy9950pxrdp",
+          "courts": "1",
+          "phase": "p2"
+        },
+        {
+          "days": [
+            4
+          ],
+          "start": "19:15",
+          "end": "21:15",
+          "gym": "mufya8stx16on",
+          "courts": "Red",
+          "phase": "p1"
+        },
+        {
+          "days": [
+            4
+          ],
+          "start": "19:15",
+          "end": "21:15",
+          "gym": "mufya8stx16on",
+          "courts": "Red",
+          "phase": "p2"
+        }
+      ]
+    },
+    {
+      "id": "mufyn5zevoyfs",
+      "name": "14 Jake",
+      "program": "boys",
+      "coaches": [
+        "mufycql5b1o74",
+        "mufycu4h28gg1"
+      ],
+      "perWeek": 2,
+      "minutes": 120,
+      "courts": 1,
+      "courtUse": "shared",
+      "fixed": true,
+      "perPhase": {},
+      "fixedSlots": [
+        {
+          "days": [
+            1
+          ],
+          "start": "18:15",
+          "end": "20:00",
+          "gym": "mufy9950pxrdp",
+          "courts": "1",
+          "phase": ""
+        },
+        {
+          "days": [
+            3
+          ],
+          "start": "17:00",
+          "end": "19:00",
+          "gym": "mufya8stx16on",
+          "courts": "Red",
+          "phase": ""
+        },
+        {
+          "days": [
+            4
+          ],
+          "start": "17:30",
+          "end": "19:30",
+          "gym": "mufya8stx16on",
+          "courts": "Sand",
+          "phase": ""
+        }
+      ]
+    },
+    {
+      "id": "mufyq3cwpe2ln",
+      "name": "13 Black",
+      "program": "girls",
+      "coaches": [
+        "mufye7jmk1o0d"
+      ],
+      "perWeek": 3,
+      "minutes": 120,
+      "courts": 1,
+      "courtUse": "",
+      "fixed": false,
+      "perPhase": {
+        "p1": 0
+      },
+      "fixedSlots": []
+    },
+    {
+      "id": "mufyqx4noth8v",
+      "name": "14 Darrick",
+      "program": "girls",
+      "coaches": [
+        "mufycfdyakwku",
+        "mufydvhu02li1"
+      ],
+      "perWeek": 3,
+      "minutes": 120,
+      "courts": 1,
+      "courtUse": "",
+      "fixed": false,
+      "perPhase": {}
+    },
+    {
+      "id": "mufyrci1c4di6",
+      "name": "13/14 Caroline",
+      "program": "girls",
+      "coaches": [
+        "mufydritx9a5t"
+      ],
+      "perWeek": 2,
+      "minutes": 90,
+      "courts": 1,
+      "courtUse": "",
+      "fixed": false,
+      "perPhase": {}
+    },
+    {
+      "id": "mufys2t3gg2ls",
+      "name": "14 Farhad",
+      "program": "girls",
+      "coaches": [
+        "mufydo8qqfm92"
+      ],
+      "perWeek": 3,
+      "minutes": 120,
+      "courts": 1,
+      "courtUse": "",
+      "fixed": false,
+      "perPhase": {
+        "p1": ""
+      }
+    },
+    {
+      "id": "mufysekp8bfjy",
+      "name": "15 Black",
+      "program": "girls",
+      "coaches": [
+        "mufydgxr4mtiv",
+        "mufydritx9a5t"
+      ],
+      "perWeek": 3,
+      "minutes": 120,
+      "courts": 1,
+      "courtUse": "",
+      "fixed": false,
+      "perPhase": {
+        "p1": 0
+      }
+    },
+    {
+      "id": "mufysxxxkh6oc",
+      "name": "16 Black",
+      "program": "girls",
+      "coaches": [
+        "mufycjm8yga6w"
+      ],
+      "perWeek": 3,
+      "minutes": 120,
+      "courts": 1,
+      "courtUse": "",
+      "fixed": false,
+      "perPhase": {
+        "p1": 0
+      }
+    },
+    {
+      "id": "mufytqytzviky",
+      "name": "17 Black",
+      "program": "girls",
+      "coaches": [
+        "mufyucpohsemb"
+      ],
+      "perWeek": 3,
+      "minutes": 120,
+      "courts": 1,
+      "courtUse": "",
+      "fixed": false,
+      "perPhase": {
+        "p1": 0
+      }
+    },
+    {
+      "id": "mufyv4v4xczoh",
+      "name": "18 Black",
+      "program": "boys",
+      "coaches": [
+        "mufyco8x0uoka"
+      ],
+      "perWeek": 3,
+      "minutes": 120,
+      "courts": 1,
+      "courtUse": "",
+      "fixed": false,
+      "perPhase": {
+        "p1": 0
+      }
+    }
+  ],
+  "rules": [
+    {
+      "id": "mufywdvgnnhmz",
+      "kind": "unavailable",
+      "strength": "must",
+      "phase": "",
+      "target": "mufycjm8yga6w",
+      "subject": "coach",
+      "days": [
+        2
+      ],
+      "from": "2026-09-24",
+      "to": "2027-01-31",
+      "start": "15:00",
+      "end": "22:00"
+    },
+    {
+      "id": "mufyxgs6zgnhp",
+      "kind": "unavailable",
+      "strength": "must",
+      "phase": "",
+      "target": "mufyd8phcr3te",
+      "subject": "coach",
+      "days": [
+        1
+      ],
+      "start": "15:00",
+      "end": "22:00",
+      "from": "2026-09-24",
+      "to": "2027-01-31"
+    },
+    {
+      "id": "mufyy7kklvw3z",
+      "kind": "unavailable",
+      "strength": "must",
+      "phase": "",
+      "target": "mufya8stx16on",
+      "subject": "gym",
+      "days": [
+        2,
+        4
+      ],
+      "start": "16:00",
+      "end": "17:30"
+    }
+  ]
+}
