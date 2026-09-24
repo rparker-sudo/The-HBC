@@ -20,6 +20,79 @@
   const timeHits = (r, s, e) => { const rs = toMin(r.start), re = toMin(r.end); if (rs == null && re == null) return true; return overlap(s, e, rs ?? 0, re ?? 1440); };
   const targets = (r, id) => !r.target || r.target === "*" || r.target === id;
 
+  // One club-wide court priority list: config.courtPriority = [{gym, court}, ...], 1st is used first.
+  // Courts not listed yet are added at the end in gym order.
+  function priorityList(config) {
+    const gyms = config.gyms || [];
+    const seen = new Set();
+    const out = [];
+    const valid = (gid, c) => { const g = gyms.find((x) => x.id === gid); return g && c >= 1 && c <= Math.max(1, Number(g.courts) || 1); };
+    for (const x of config.courtPriority || []) {
+      const k = `${x.gym}:${Number(x.court)}`;
+      if (!seen.has(k) && valid(x.gym, Number(x.court))) { seen.add(k); out.push({ gym: x.gym, court: Number(x.court), ...(x.off ? { off: true } : {}) }); }
+    }
+    for (const g of gyms) for (let c = 1; c <= Math.max(1, Number(g.courts) || 1); c++) {
+      const k = `${g.id}:${c}`;
+      if (!seen.has(k)) { seen.add(k); out.push({ gym: g.id, court: c }); }
+    }
+    return out;
+  }
+  // A gym's court numbers sorted by the club-wide priority
+  function courtOrder(g, config) {
+    const n = Math.max(1, Number(g.courts) || 1);
+    const all = Array.from({ length: n }, (_, i) => i + 1);
+    if (!config) return all;
+    const rank = new Map(priorityList(config).map((x, i) => [`${x.gym}:${x.court}`, i]));
+    return all.sort((a, b) => (rank.get(`${g.id}:${a}`) ?? 1e9) - (rank.get(`${g.id}:${b}`) ?? 1e9));
+  }
+  const courtName = (g, c) => (g && g.courtNames && String(g.courtNames[c] || "").trim()) || `Court ${c}`;
+
+  // Court ranking for one team: its own list when customPriority is on, otherwise the club list
+  function teamPriority(config, team) {
+    const list = team && team.customPriority ? priorityList({ gyms: config.gyms, courtPriority: team.courtPriority }) : priorityList(config);
+    return { rank: new Map(list.map((x, i) => [`${x.gym}:${x.court}`, i])), off: new Set(list.filter((x) => x.off).map((x) => `${x.gym}:${x.court}`)) };
+  }
+
+  // Weekly practice slots already decided for a phase: set schedules, plus (optionally) each flexible
+  // team's generated/edited times. Returns placements in the same shape the generator produces.
+  function slotsFor(config, phaseId, withGenerated = true) {
+    const placements = [], warnings = [];
+    const gymIds = new Set((config.gyms || []).map((g) => g.id));
+    for (const t of config.teams || []) {
+      const list = t.fixed ? (t.fixedSlots || []) : withGenerated ? (t.generatedSlots || []) : [];
+      for (const slot of list.filter((x) => inPhase(x, phaseId))) {
+        const s = toMin(slot.start), e = toMin(slot.end);
+        if (s == null || e == null || e <= s) { warnings.push(`${t.name}: a practice time is incomplete and was skipped.`); continue; }
+        if (!slot.gym || !gymIds.has(slot.gym)) { warnings.push(`${t.name}: a practice has no gym chosen and was skipped.`); continue; }
+        const courts = String(slot.courts || "").split(/[\s,]+/).map(Number).filter((n) => n > 0);
+        for (const d of slot.days || []) {
+          placements.push({ team: t.id, day: d, start: s, end: e, gym: slot.gym, courts: courts.length ? courts : [1], share: t.courtUse === "shared",
+            coaches: [...(t.coaches || [])], fixed: !!t.fixed, edited: !t.fixed, score: 0 });
+        }
+      }
+    }
+    return { placements, warnings };
+  }
+
+  // Coach / court / team clashes inside a set of weekly placements
+  function slotConflicts(config, placements) {
+    const tn = (id) => ((config.teams || []).find((t) => t.id === id) || {}).name || id;
+    const cn = (id) => ((config.coaches || []).find((c) => c.id === id) || {}).name || "a coach";
+    const gym = (id) => (config.gyms || []).find((g) => g.id === id);
+    const out = [];
+    for (let i = 0; i < placements.length; i++) for (let j = i + 1; j < placements.length; j++) {
+      const a = placements[i], b = placements[j];
+      if (a.day !== b.day || !overlap(a.start, a.end, b.start, b.end)) continue;
+      const when = `${DAYS[a.day]} ${toHHMM(Math.max(a.start, b.start))}`;
+      const coach = a.coaches.find((c) => b.coaches.includes(c));
+      if (a.team === b.team) out.push(`${tn(a.team)} has two practices at the same time (${when}).`);
+      else if (coach) out.push(`${cn(coach)} coaches both ${tn(a.team)} and ${tn(b.team)} (${when}).`);
+      const shared = a.gym === b.gym ? a.courts.filter((c) => b.courts.includes(c)) : [];
+      if (shared.length && (a.share ? 1 : 2) + (b.share ? 1 : 2) > 2) out.push(`${tn(a.team)} and ${tn(b.team)} are both on ${courtName(gym(a.gym), shared[0])} (${when}).`);
+    }
+    return out;
+  }
+
   function teamPerWeek(team, phaseId) {
     if (team.fixed) return 0;
     const v = team.perPhase && team.perPhase[phaseId];
@@ -31,7 +104,9 @@
   // ---------------------------------------------------------------------------
   function generate(config, phaseId, opts = {}) {
     const attempts = opts.attempts || 80;
-    const gyms = (config.gyms || []).map((g) => ({ ...g, courts: Math.max(1, Number(g.courts) || 1), hours: (g.hours || []).filter((w) => inPhase(w, phaseId)) }));
+    const gyms = (config.gyms || []).map((g) => ({ ...g, courts: Math.max(1, Number(g.courts) || 1),
+      order: Array.from({ length: Math.max(1, Number(g.courts) || 1) }, (_, i) => i + 1),
+      hours: (g.hours || []).filter((w) => inPhase(w, phaseId)) }));
     const gymById = Object.fromEntries(gyms.map((g) => [g.id, g]));
     const coachById = Object.fromEntries((config.coaches || []).map((c) => [c.id, c]));
     const rules = (config.rules || []).filter((r) => inPhase(r, phaseId) && !isDated(r));
@@ -40,19 +115,10 @@
     const warnings = [];
 
     // ---- fixed (not flexible) schedules go in first
-    const fixed = [];
-    for (const t of teams) {
-      if (!t.fixed) continue;
-      for (const slot of (t.fixedSlots || []).filter((s) => inPhase(s, phaseId))) {
-        const g = gymById[slot.gym];
-        const s = toMin(slot.start), e = toMin(slot.end);
-        if (s == null || e == null || e <= s) { warnings.push(`${t.name}: a set practice has an invalid time and was skipped.`); continue; }
-        const courts = String(slot.courts || "1").split(/[\s,]+/).map(Number).filter((n) => n > 0);
-        for (const d of slot.days || []) {
-          fixed.push({ team: t.id, day: d, start: s, end: e, gym: slot.gym || "", courts, share: t.courtUse === "shared", coaches: [...(t.coaches || [])], fixed: true, score: 0, gymMissing: !g });
-        }
-      }
-    }
+    const fixedSlots = slotsFor(config, phaseId, false);
+    const fixed = fixedSlots.placements;
+    warnings.push(...fixedSlots.warnings);
+    const ranks = new Map(teams.map((t) => [t.id, teamPriority(config, t)]));
 
     // ---- flexible requests
     const requests = teams.filter((t) => teamPerWeek(t, phaseId) > 0).map((t) => ({ team: t, n: teamPerWeek(t, phaseId) }));
@@ -145,6 +211,9 @@
       }
       // keep courts compact: reward touching another booking on the same court
       if (placed.some((p) => p.gym === g.id && p.day === d && p.courts.some((c) => courts.includes(c)) && (p.end === s || p.start === e))) score += 1;
+      // priority: use the team's higher-priority courts first (its own list or the club list)
+      const tr = ranks.get(team.id);
+      score -= courts.reduce((a, c) => a + (tr.rank.get(`${g.id}:${c}`) || 0), 0) * 4;
       score -= dur > 0 ? 0 : 100;
       if (ctx && ctx.noise) score += ctx.noise();
       return { ok: true, score };
@@ -160,16 +229,19 @@
       const unit = team.courtUse === "shared" ? 1 : 2;
       const pref = rules.filter((r) => r.kind === "court" && targets(r, team.id) && r.gym === g.id).map((r) => Number(r.court));
       const blocked = new Set(rules.filter((r) => r.kind === "unavailable" && r.subject === "court" && r.strength === "must" && r.target === g.id && dayOk(r, d) && timeHits(r, s, e)).map((r) => Number(r.court)));
+      const tr = ranks.get(team.id);
+      const rk = (c) => tr.rank.get(`${g.id}:${c}`) ?? 1e6;
       const free = [];
-      for (let c = 1; c <= g.courts; c++) {
+      for (const c of g.order) {
         if (blocked.has(c)) continue;
+        if (tr.off.has(`${g.id}:${c}`)) continue;
         const load = placed.filter((p) => p.gym === g.id && p.day === d && p.courts.includes(c) && overlap(s, e, p.start, p.end)).reduce((a, p) => a + units(p), 0);
         if (load + unit <= 2) free.push({ c, load });
       }
       // shared teams prefer a court that already has a shared team (pairs up halves)
-      free.sort((a, b) => (pref.includes(b.c) - pref.includes(a.c)) || (unit === 1 ? b.load - a.load : 0) || a.c - b.c);
+      free.sort((a, b) => (pref.includes(b.c) - pref.includes(a.c)) || (unit === 1 ? b.load - a.load : 0) || rk(a.c) - rk(b.c));
       if (free.length < need) return null;
-      return free.slice(0, need).map((x) => x.c).sort((a, b) => a - b);
+      return free.slice(0, need).map((x) => x.c).sort((a, b) => rk(a) - rk(b));
     }
 
     function candidates(team, placed, ctx, tally) {
@@ -199,6 +271,8 @@
       const dur = Math.max(15, Number(team.minutes) || 90);
       if (!gyms.length) return "No gyms have been added yet.";
       if (!gyms.some((g) => g.hours.some((w) => toMin(w.end) - toMin(w.start) >= dur))) return `No gym has an open window of ${dur} minutes in this phase.`;
+      const tr = ranks.get(team.id);
+      if (tr.off.size && gyms.every((g) => g.order.every((c) => tr.off.has(`${g.id}:${c}`)))) return "Every court is marked \"Don't use\" in this team's court priority.";
       const top = Object.entries(tally).sort((a, b) => b[1] - a[1]).slice(0, 2).map(([k]) => k);
       return top.length ? `No open slot left: most times failed because ${top.join(", then ")}.` : "No open slot found.";
     }
@@ -243,16 +317,8 @@
       if (!unplaced.length && a >= 20 && !shareRules.length) break;
     }
 
-    // warn about clashes inside the fixed schedules
-    for (let i = 0; i < fixed.length; i++) for (let j = i + 1; j < fixed.length; j++) {
-      const a = fixed[i], b = fixed[j];
-      if (a.day !== b.day || !overlap(a.start, a.end, b.start, b.end)) continue;
-      const tn = (id) => (teamById[id] ? teamById[id].name : id);
-      const sharedCoach = a.coaches.find((c) => b.coaches.includes(c));
-      if (sharedCoach) warnings.push(`Set schedules clash: ${tn(a.team)} and ${tn(b.team)} share coach ${coachById[sharedCoach] ? coachById[sharedCoach].name : ""} on ${DAYS[a.day]}.`);
-      if (a.gym === b.gym && a.courts.some((c) => b.courts.includes(c)) && units(a) + units(b) > 2) warnings.push(`Set schedules clash: ${tn(a.team)} and ${tn(b.team)} are on the same court on ${DAYS[a.day]}.`);
-    }
-    for (const f of fixed) if (f.gymMissing) warnings.push(`${teamById[f.team].name}: a set practice has no gym chosen.`);
+    // warn about clashes inside the set schedules
+    for (const w of slotConflicts(config, fixed)) warnings.push(`Set schedules clash: ${w}`);
 
     const placements = best ? best.placements.sort((a, b) => a.day - b.day || a.start - b.start || String(a.gym).localeCompare(String(b.gym))) : fixed;
     return { phase: phaseId, placements, unplaced: best ? best.unplaced : [], warnings };
@@ -266,9 +332,12 @@
   const parse = (s) => { const [y, m, d] = String(s).split("-").map(Number); return new Date(y, m - 1, d); };
   const addDays = (d, n) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
 
-  function courtLabel(p) {
+  // p: {courts, share}; gym (optional) supplies court names
+  function courtLabel(p, gym) {
     if (!p.courts || !p.courts.length) return "";
-    const base = p.courts.length > 1 ? `Courts ${p.courts.join(" & ")}` : `Court ${p.courts[0]}`;
+    const named = gym && gym.courtNames && p.courts.some((c) => String(gym.courtNames[c] || "").trim());
+    const base = named ? p.courts.map((c) => courtName(gym, c)).join(" & ")
+      : p.courts.length > 1 ? `Courts ${p.courts.join(" & ")}` : `Court ${p.courts[0]}`;
     return p.share ? `${base} (shared)` : base;
   }
 
@@ -336,7 +405,7 @@
           skip,
           location: gym ? (gym.address || gym.name) : "",
           venue: gym ? gym.name : "",
-          court: courtLabel(p),
+          court: courtLabel(p, gym),
           gym: p.gym,
           courts: p.courts,
           share: !!p.share,
@@ -382,7 +451,17 @@
     return out;
   }
 
-  const api = { DAYS, toMin, toHHMM, generate, buildEvents, findConflicts, courtLabel, teamPerWeek };
+  // Generated placements -> editable per-team slot rows ({phase, days, start, end, gym, courts})
+  function toSlots(result, newId) {
+    const byTeam = {};
+    for (const p of result.placements.filter((x) => !x.fixed)) {
+      (byTeam[p.team] ||= []).push({ id: newId ? newId() : Math.random().toString(36).slice(2), phase: result.phase, days: [p.day],
+        start: toHHMM(p.start), end: toHHMM(p.end), gym: p.gym, courts: p.courts.join(",") });
+    }
+    return byTeam;
+  }
+
+  const api = { DAYS, toMin, toHHMM, generate, buildEvents, findConflicts, courtLabel, courtName, courtOrder, priorityList, teamPriority, teamPerWeek, slotsFor, slotConflicts, toSlots };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else root.HBCScheduler = api;
 })(typeof window !== "undefined" ? window : globalThis);

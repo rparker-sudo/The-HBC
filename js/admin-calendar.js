@@ -63,11 +63,18 @@
         el("button", { type: "button", class: "cal-num adm-addday", title: "Add an event on this date", onclick: () => A.openEditor(null, k) }, d.getDate()));
       for (const o of byDay[k] || []) {
         cell.append(el("button", { type: "button", class: `cal-chip p-${o.program || "all"} t-${o.type || "event"}${bad.has(o.id + o.key) ? " conflict" : ""}`, onclick: () => openOcc(o), title: [o.title, E.timeRange(o), o.venue, o.court].filter(Boolean).join(" · ") },
-          o.start ? el("span", { class: "cal-chip-time" }, E.formatTime(o.start)) : null, o.title.replace(/ Practice$/, ""), (o.courts || []).length ? el("span", { class: "cal-chip-time" }, ` · C${o.courts.join("&")}${o.share ? "½" : ""}`) : null));
+          o.start ? el("span", { class: "cal-chip-time" }, E.formatTime(o.start)) : null, o.title.replace(/ Practice$/, ""), (o.courts || []).length ? el("span", { class: "cal-chip-time" }, ` · ${chipCourt(o)}`) : null));
       }
       grid.append(cell);
     }
     root.replaceChildren(bar, banner, grid);
+  }
+
+  // short court label for chips: custom names if set, otherwise C1, C2…
+  function chipCourt(o) {
+    const g = (state.config.gyms || []).find((x) => x.id === o.gym);
+    const named = g && g.courtNames && o.courts.some((c) => String(g.courtNames[c] || "").trim());
+    return (named ? o.courts.map((c) => S.courtName(g, c)).join(" & ") : "C" + o.courts.join("&")) + (o.share ? " ½" : "");
   }
 
   function sel(opts, onChange) {
@@ -95,7 +102,7 @@
     f.end.value = master.end || "";
     f.gym.replaceChildren(el("option", { value: "" }, "Other / not a club gym"), ...(cfg.gyms || []).map((g) => el("option", { value: g.id }, g.name)));
     f.gym.value = master.gym || "";
-    f.courts.value = (master.courts || []).join(", ");
+    renderCourts(master.courts || []);
     f.location.value = master.location || "";
     f.notes.value = master.notes || "";
     const box = $("#occ-coaches");
@@ -110,9 +117,18 @@
     dlg.showModal();
   }
 
+  // court checkboxes for the chosen gym, named and in priority order
+  function renderCourts(selected) {
+    const box = $("#occ-courts");
+    const g = (state.config.gyms || []).find((x) => x.id === f.gym.value);
+    if (!g) { box.replaceChildren(el("small", {}, "Choose a club gym to pick courts.")); return; }
+    box.replaceChildren(...S.courtOrder(g, state.config).map((c) => el("label", { class: "adm-check" },
+      el("input", { type: "checkbox", value: String(c), checked: selected.includes(c) ? "" : null }), S.courtName(g, c))));
+  }
   f.gym.addEventListener("change", () => {
     const g = (state.config.gyms || []).find((x) => x.id === f.gym.value);
     if (g) f.location.value = g.address || g.name;
+    renderCourts([]);
   });
 
   function readForm() {
@@ -120,7 +136,7 @@
     if (!f.title.value.trim()) return err("Please give it a title.");
     if (!f.date.value) return err("Please choose a date.");
     if (f.start.value && f.end.value && f.end.value <= f.start.value) return err("The end time must be after the start time.");
-    const courts = f.courts.value.split(/[\s,&]+/).map(Number).filter((n) => n > 0);
+    const courts = [...document.querySelectorAll("#occ-courts input:checked")].map((i) => Number(i.value));
     const gym = (state.config.gyms || []).find((g) => g.id === f.gym.value);
     const coachIds = [...document.querySelectorAll("#occ-coaches input:checked")].map((i) => i.value);
     const names = Object.fromEntries((state.config.coaches || []).map((c) => [c.id, c.name]));
@@ -128,7 +144,7 @@
     return {
       title: f.title.value.trim(), date: f.date.value, start: f.start.value || undefined, end: f.end.value || undefined,
       gym: f.gym.value || undefined, venue: gym ? gym.name : undefined, courts,
-      court: courts.length ? S.courtLabel({ courts, share }) : undefined,
+      court: courts.length ? S.courtLabel({ courts, share }, gym) : undefined,
       location: f.location.value.trim(), notes: f.notes.value.trim(),
       ...((state.config.coaches || []).length ? { coachIds, coaches: coachIds.map((c) => names[c]).filter(Boolean) } : {}),
     };

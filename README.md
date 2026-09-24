@@ -37,6 +37,12 @@ A strip at the top of every page switches between the wings.
 - Rules (Must or Prefer, optionally per phase): unavailable (coach/team/gym/court, days, times, optional date range),
   team uses a gym or court, practice days, time window, no back-to-back days, coach max per day, coach travel time
   between gyms, and two teams sharing one court.
+- Court priority: `courtPriority` is one ranked list of individual courts across all gyms ({gym, court}); the generator
+  fills higher-ranked courts first. A team can set `customPriority` with its own `courtPriority` list, where `off: true`
+  means the team never uses that court. Gyms can name each court (`courtNames`).
+- Generated times are written into each flexible team as `generatedSlots` (same shape as a set schedule's `fixedSlots`),
+  so they can be edited in the team's listing; "Add to calendar" uses those rows. "Lock as set schedule" moves them into
+  `fixedSlots` so regenerating won't move that team.
 - `js/scheduler.js` is the engine: set schedules are placed first, then it tries many arrangements and keeps the one
   that places the most practices with the best rule score. Coaches are never double-booked and a court holds at most
   one full-court team or two shared-court teams. "Add to calendar" turns each phase's weekly pattern into weekly

@@ -622,3 +622,29 @@ button.btn { cursor: pointer; font-size: 1rem; justify-self: start; }
 .adm-publish-bar h3 { display: none; }
 .adm-publish-bar p { font-size: .85rem; }
 .adm-publish-bar .btn { padding: .6rem 1.2rem; }
+
+/* gym + court priority */
+.sb-gym-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.sb-prio { font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; background: var(--black); color: var(--white); border-radius: 999px; padding: .3rem .7rem; }
+.sb-move { display: inline-flex; gap: 4px; }
+.sb-arrow { font: inherit; font-weight: 700; width: 30px; height: 30px; border-radius: 8px; border: 1px solid var(--line); background: var(--white); cursor: pointer; }
+.sb-arrow:hover:not(:disabled) { border-color: var(--black); }
+.sb-arrow:disabled { opacity: .35; cursor: default; }
+.sb-courts { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 8px; margin-bottom: 8px; }
+.sb-court { display: flex; align-items: center; gap: 8px; background: var(--white); border: 1px solid var(--line); border-radius: 10px; padding: 6px 8px; }
+.sb-court input { flex: 1; min-width: 0; padding: .45rem .6rem; font-size: .9rem; }
+.sb-rank { font-weight: 700; font-size: .8rem; min-width: 30px; }
+.sb-courtno { font-size: .75rem; color: var(--muted); }
+.sb-prio-list { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 8px; }
+.sb-prio-list li:first-child { border-color: var(--black); }
+.sb-prio-name { flex: 1; display: grid; line-height: 1.2; }
+.sb-prio-name small { color: var(--muted); }
+.sb-off { display: inline-flex; flex-direction: row; align-items: center; gap: 4px; font-size: .75rem; font-weight: 600; color: var(--muted); white-space: nowrap; }
+.sb-off input { width: 14px; height: 14px; padding: 0; }
+.sb-court.off { opacity: .55; background: #f4f4f4; }
+.sb-court.off strong { text-decoration: line-through; }
+.sb-team-prio { margin: 6px 0 4px; }
+.sb-team-prio .sb-field { max-width: 320px; }
+.sb-team-prio .sb-prio-list { margin-top: 8px; }
+.sb-generated { margin-top: 10px; border-top: 1px dashed var(--line); padding-top: 8px; }
+.sb-gen-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; }

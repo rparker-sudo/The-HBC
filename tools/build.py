@@ -964,7 +964,9 @@ page("admin/index.html", "club", "Calendar Admin | The HBC Volleyball Club",
                 <li><strong>Gyms &amp; courts:</strong> add each gym, its number of courts and the times you can use it (times can be different per phase).</li>
                 <li><strong>Coaches</strong> and <strong>teams:</strong> give each team its coaches, practices per week, practice length and court needs. Mark a team as a <em>set schedule</em> if its times are already decided.</li>
                 <li><strong>Special rules:</strong> add anything the schedule must or should follow.</li>
-                <li><strong>Generate</strong>, review the weekly pattern, then <strong>Add to calendar</strong>.</li>
+                <li><strong>Court priority:</strong> put every court in the order to use it. Any team can have its own order, and can mark courts it should never use.</li>
+                <li><strong>Generate.</strong> Each flexible team's times are written into its listing, where you can change any day, time, gym or court. Use <em>Lock as set schedule</em> to keep a team's times when you generate again.</li>
+                <li>Check the weekly preview (clashes show in red), then <strong>Add to calendar</strong>.</li>
                 <li>On the <strong>Calendar</strong> tab, click any practice to change just that practice, or that practice and all future ones.</li>
                 <li>Click <strong>Publish to website</strong> to make everything live.</li>
               </ol>
@@ -1050,7 +1052,7 @@ page("admin/index.html", "club", "Calendar Admin | The HBC Volleyball Club",
         </div>
         <div class="form-row">
           <label>Gym<select name="gym"></select></label>
-          <label>Court(s)<input name="courts" placeholder="1 or 1, 2"></label>
+          <div><span class="sb-sub">Court(s)</span><div id="occ-courts" class="sb-days"></div></div>
         </div>
         <label>Location / address<input name="location"></label>
         <div><span class="sb-sub">Coaches</span><div id="occ-coaches" class="sb-days"></div></div>
