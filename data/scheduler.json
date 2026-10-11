@@ -66,18 +66,14 @@
             1,
             2,
             3,
-            4,
-            5
+            4
           ],
           "start": "16:00",
           "end": "21:00",
           "phase": ""
         },
         {
-          "days": [
-            6,
-            0
-          ],
+          "days": [],
           "start": "09:00",
           "end": "21:00",
           "phase": ""
@@ -149,10 +145,6 @@
       "name": "Jordan"
     },
     {
-      "id": "mufydo8qqfm92",
-      "name": "Farhad"
-    },
-    {
       "id": "mufydritx9a5t",
       "name": "Caroline"
     },
@@ -211,8 +203,8 @@
           "days": [
             0
           ],
-          "start": "18:00",
-          "end": "20:00",
+          "start": "18:30",
+          "end": "20:30",
           "gym": "mufybn675nyev",
           "courts": "1",
           "phase": "p2"
@@ -221,8 +213,8 @@
           "days": [
             0
           ],
-          "start": "18:00",
-          "end": "20:00",
+          "start": "18:30",
+          "end": "20:30",
           "gym": "mufybn675nyev",
           "courts": "1",
           "phase": "p1"
@@ -270,8 +262,8 @@
           "days": [
             0
           ],
-          "start": "18:00",
-          "end": "20:00",
+          "start": "18:30",
+          "end": "20:30",
           "gym": "mufybn675nyev",
           "courts": "1",
           "phase": "p1"
@@ -280,8 +272,8 @@
           "days": [
             0
           ],
-          "start": "18:00",
-          "end": "20:00",
+          "start": "18:30",
+          "end": "20:30",
           "gym": "mufybn675nyev",
           "courts": "1",
           "phase": "p2"
@@ -307,8 +299,8 @@
           "days": [
             0
           ],
-          "start": "17:45",
-          "end": "20:00",
+          "start": "18:30",
+          "end": "20:30",
           "gym": "mufybn675nyev",
           "courts": "2",
           "phase": "p1"
@@ -317,8 +309,8 @@
           "days": [
             0
           ],
-          "start": "17:45",
-          "end": "20:00",
+          "start": "18:30",
+          "end": "20:30",
           "gym": "mufybn675nyev",
           "courts": "2",
           "phase": "p2"
@@ -405,7 +397,7 @@
             1
           ],
           "start": "18:15",
-          "end": "20:00",
+          "end": "20:15",
           "gym": "mufy9950pxrdp",
           "courts": "1",
           "phase": ""
@@ -415,9 +407,9 @@
             3
           ],
           "start": "17:00",
-          "end": "19:00",
+          "end": "19:30",
           "gym": "mufya8stx16on",
-          "courts": "Red",
+          "courts": "1",
           "phase": ""
         },
         {
@@ -425,9 +417,20 @@
             4
           ],
           "start": "17:30",
-          "end": "19:30",
+          "end": "20:00",
           "gym": "mufya8stx16on",
-          "courts": "Sand",
+          "courts": "3",
+          "phase": ""
+        },
+        {
+          "id": "mv36es7vrxxzn",
+          "days": [
+            0
+          ],
+          "start": "16:30",
+          "end": "18:30",
+          "gym": "mufybn675nyev",
+          "courts": "2",
           "phase": ""
         }
       ]
@@ -444,145 +447,46 @@
       "minutes": 120,
       "courts": 1,
       "courtUse": "",
-      "fixed": false,
+      "fixed": true,
       "perPhase": {
         "p1": ""
       },
-      "fixedSlots": [],
-      "generatedSlots": [
+      "fixedSlots": [
         {
           "id": "muvpzkgzzg9r4",
-          "phase": "p1",
+          "phase": "",
           "days": [
             0
           ],
-          "start": "17:30",
-          "end": "19:30",
+          "start": "16:30",
+          "end": "18:30",
           "gym": "mufybn675nyev",
-          "courts": "3"
-        },
-        {
-          "id": "muvpzkgzehqrd",
-          "phase": "p1",
-          "days": [
-            2
-          ],
-          "start": "18:30",
-          "end": "20:30",
-          "gym": "mufya8stx16on",
-          "courts": "1"
-        },
-        {
-          "id": "muvpzkgzcr5mg",
-          "phase": "p1",
-          "days": [
-            5
-          ],
-          "start": "18:15",
-          "end": "20:15",
-          "gym": "mufya8stx16on",
-          "courts": "1"
-        },
-        {
-          "id": "muvpzkgz9n3qj",
-          "phase": "p2",
-          "days": [
-            0
-          ],
-          "start": "16:45",
-          "end": "18:45",
-          "gym": "mufybn675nyev",
-          "courts": "3"
-        },
-        {
-          "id": "muvpzkgz1fbsy",
-          "phase": "p2",
-          "days": [
-            2
-          ],
-          "start": "19:00",
-          "end": "21:00",
-          "gym": "mufya8stx16on",
           "courts": "3"
         },
         {
           "id": "muvpzkgzl9cwa",
-          "phase": "p2",
+          "phase": "",
           "days": [
-            5
+            1
           ],
-          "start": "18:00",
-          "end": "20:00",
+          "start": "17:00",
+          "end": "19:00",
           "gym": "mufya8stx16on",
           "courts": "3"
         },
         {
-          "id": "muvpzkgz3mgwf",
-          "phase": "p3",
-          "days": [
-            0
-          ],
-          "start": "18:45",
-          "end": "20:45",
-          "gym": "mufybn675nyev",
-          "courts": "1"
-        },
-        {
           "id": "muvpzkgzsiv3r",
-          "phase": "p3",
+          "phase": "",
           "days": [
-            1
+            3
           ],
-          "start": "18:45",
-          "end": "20:45",
-          "gym": "mufy9950pxrdp",
-          "courts": "2"
-        },
-        {
-          "id": "muvpzkgzyvn1a",
-          "phase": "p3",
-          "days": [
-            5
-          ],
-          "start": "18:15",
-          "end": "20:15",
+          "start": "17:00",
+          "end": "19:00",
           "gym": "mufya8stx16on",
-          "courts": "1"
-        },
-        {
-          "id": "muvpzkgzq6j9p",
-          "phase": "mufy7lyg578nq",
-          "days": [
-            0
-          ],
-          "start": "18:45",
-          "end": "20:45",
-          "gym": "mufybn675nyev",
-          "courts": "1"
-        },
-        {
-          "id": "muvpzkgzy4x0t",
-          "phase": "mufy7lyg578nq",
-          "days": [
-            1
-          ],
-          "start": "18:45",
-          "end": "20:45",
-          "gym": "mufy9950pxrdp",
-          "courts": "2"
-        },
-        {
-          "id": "muvpzkgzagtan",
-          "phase": "mufy7lyg578nq",
-          "days": [
-            5
-          ],
-          "start": "18:15",
-          "end": "20:15",
-          "gym": "mufya8stx16on",
-          "courts": "1"
+          "courts": "3"
         }
-      ]
+      ],
+      "generatedSlots": []
     },
     {
       "id": "mufyqx4noth8v",
@@ -596,138 +500,62 @@
       "minutes": 120,
       "courts": 1,
       "courtUse": "",
-      "fixed": false,
+      "fixed": true,
       "perPhase": {},
-      "generatedSlots": [
+      "generatedSlots": [],
+      "fixedSlots": [
         {
           "id": "muvpzkgzmmyoq",
-          "phase": "p1",
+          "phase": "",
           "days": [
-            1
+            0
           ],
-          "start": "17:00",
-          "end": "19:00",
-          "gym": "mufya8stx16on",
-          "courts": "1"
-        },
-        {
-          "id": "muvpzkgz0zrde",
-          "phase": "p1",
-          "days": [
-            3
-          ],
-          "start": "19:00",
-          "end": "21:00",
-          "gym": "mufya8stx16on",
-          "courts": "1"
-        },
-        {
-          "id": "muvpzkgz05dln",
-          "phase": "p1",
-          "days": [
-            6
-          ],
-          "start": "10:30",
-          "end": "12:30",
-          "gym": "mufya8stx16on",
-          "courts": "1"
+          "start": "16:30",
+          "end": "18:30",
+          "gym": "mufybn675nyev",
+          "courts": "2"
         },
         {
           "id": "muvpzkgzv7ka3",
-          "phase": "p2",
+          "phase": "",
           "days": [
             1
           ],
-          "start": "16:15",
-          "end": "18:15",
-          "gym": "mufya8stx16on",
+          "start": "18:15",
+          "end": "20:15",
+          "gym": "mufy9950pxrdp",
           "courts": "1"
         },
         {
           "id": "muvpzkgzvop64",
-          "phase": "p2",
+          "phase": "",
           "days": [
-            3
+            2
           ],
-          "start": "19:00",
-          "end": "21:00",
+          "start": "17:30",
+          "end": "20:00",
           "gym": "mufya8stx16on",
           "courts": "1"
         },
         {
           "id": "muvpzkgz293nl",
-          "phase": "p2",
+          "phase": "",
           "days": [
-            6
+            3
           ],
-          "start": "11:30",
-          "end": "13:30",
+          "start": "17:00",
+          "end": "19:30",
           "gym": "mufya8stx16on",
           "courts": "1"
         },
         {
           "id": "muvpzkgzjmnrg",
-          "phase": "p3",
+          "phase": "",
           "days": [
-            0
+            4
           ],
-          "start": "19:00",
-          "end": "21:00",
-          "gym": "mufybn675nyev",
-          "courts": "2"
-        },
-        {
-          "id": "muvpzkgz5jroc",
-          "phase": "p3",
-          "days": [
-            3
-          ],
-          "start": "16:15",
-          "end": "18:15",
-          "gym": "mufya8stx16on",
-          "courts": "3"
-        },
-        {
-          "id": "muvpzkgzwvbmy",
-          "phase": "p3",
-          "days": [
-            5
-          ],
-          "start": "16:15",
-          "end": "18:15",
-          "gym": "mufya8stx16on",
-          "courts": "3"
-        },
-        {
-          "id": "muvpzkgzb1y4w",
-          "phase": "mufy7lyg578nq",
-          "days": [
-            0
-          ],
-          "start": "19:00",
-          "end": "21:00",
-          "gym": "mufybn675nyev",
-          "courts": "2"
-        },
-        {
-          "id": "muvpzkgzfjjos",
-          "phase": "mufy7lyg578nq",
-          "days": [
-            3
-          ],
-          "start": "16:15",
-          "end": "18:15",
-          "gym": "mufya8stx16on",
-          "courts": "3"
-        },
-        {
-          "id": "muvpzkgzrpl3s",
-          "phase": "mufy7lyg578nq",
-          "days": [
-            5
-          ],
-          "start": "16:15",
-          "end": "18:15",
+          "start": "17:30",
+          "end": "20:00",
           "gym": "mufya8stx16on",
           "courts": "3"
         }
@@ -739,66 +567,34 @@
       "program": "girls",
       "coaches": [
         "mufydgxr4mtiv",
-        "mufydritx9a5t"
+        "mufydvhu02li1"
       ],
       "perWeek": 3,
       "minutes": 120,
       "courts": 1,
       "courtUse": "",
-      "fixed": false,
+      "fixed": true,
       "perPhase": {
         "p1": 0
       },
-      "generatedSlots": [
+      "generatedSlots": [],
+      "fixedSlots": [
         {
-          "id": "muvpzkgzjbzil",
-          "phase": "p2",
+          "id": "mv36insniqtdh",
+          "phase": "",
           "days": [
             0
           ],
-          "start": "18:45",
-          "end": "20:45",
+          "start": "18:30",
+          "end": "20:30",
           "gym": "mufybn675nyev",
           "courts": "3"
         },
         {
-          "id": "muvpzkgzg9e0c",
-          "phase": "p2",
+          "id": "mv36insnkf69p",
+          "phase": "",
           "days": [
-            3
-          ],
-          "start": "18:00",
-          "end": "20:00",
-          "gym": "mufya8stx16on",
-          "courts": "3"
-        },
-        {
-          "id": "muvpzkgzdryl0",
-          "phase": "p2",
-          "days": [
-            5
-          ],
-          "start": "16:00",
-          "end": "18:00",
-          "gym": "mufya8stx16on",
-          "courts": "3"
-        },
-        {
-          "id": "muvpzkgzd0yyc",
-          "phase": "p3",
-          "days": [
-            0
-          ],
-          "start": "16:45",
-          "end": "18:45",
-          "gym": "mufybn675nyev",
-          "courts": "1"
-        },
-        {
-          "id": "muvpzkgzwfp8n",
-          "phase": "p3",
-          "days": [
-            3
+            1
           ],
           "start": "19:00",
           "end": "21:00",
@@ -806,46 +602,11 @@
           "courts": "1"
         },
         {
-          "id": "muvpzkgzhmk5n",
-          "phase": "p3",
-          "days": [
-            5
-          ],
-          "start": "16:15",
-          "end": "18:15",
-          "gym": "mufya8stx16on",
-          "courts": "1"
-        },
-        {
-          "id": "muvpzkgzdmmux",
-          "phase": "mufy7lyg578nq",
-          "days": [
-            0
-          ],
-          "start": "16:45",
-          "end": "18:45",
-          "gym": "mufybn675nyev",
-          "courts": "1"
-        },
-        {
-          "id": "muvpzkgzp8wyv",
-          "phase": "mufy7lyg578nq",
-          "days": [
-            3
-          ],
-          "start": "19:00",
-          "end": "21:00",
-          "gym": "mufya8stx16on",
-          "courts": "1"
-        },
-        {
-          "id": "muvpzkgzbwutl",
-          "phase": "mufy7lyg578nq",
-          "days": [
-            5
-          ],
-          "start": "16:15",
-          "end": "18:15",
+          "id": "mv36insn09kxg",
+          "phase": "",
+          "days": [],
+          "start": "17:30",
+          "end": "19:30",
           "gym": "mufya8stx16on",
           "courts": "1"
         }
@@ -862,107 +623,42 @@
       "minutes": 120,
       "courts": 1,
       "courtUse": "",
-      "fixed": false,
+      "fixed": true,
       "perPhase": {
         "p1": 0
       },
-      "generatedSlots": [
+      "generatedSlots": [],
+      "fixedSlots": [
         {
-          "id": "muvpzkgz3k9yv",
-          "phase": "p2",
+          "id": "mv36insnsrd2f",
+          "phase": "",
           "days": [
-            2
+            0
           ],
-          "start": "17:45",
-          "end": "19:45",
-          "gym": "mufya8stx16on",
+          "start": "16:30",
+          "end": "18:30",
+          "gym": "mufybn675nyev",
           "courts": "1"
         },
         {
-          "id": "muvpzkgzz820p",
-          "phase": "p2",
-          "days": [
-            5
-          ],
-          "start": "17:30",
-          "end": "19:30",
-          "gym": "mufya8stx16on",
-          "courts": "1"
-        },
-        {
-          "id": "muvpzkgz02dzi",
-          "phase": "p2",
-          "days": [
-            6
-          ],
-          "start": "14:45",
-          "end": "16:45",
-          "gym": "mufya8stx16on",
-          "courts": "1"
-        },
-        {
-          "id": "muvpzkgzq9iuu",
-          "phase": "p3",
+          "id": "mv36insnp9wd3",
+          "phase": "",
           "days": [
             1
           ],
-          "start": "18:00",
-          "end": "20:00",
-          "gym": "mufya8stx16on",
-          "courts": "1"
-        },
-        {
-          "id": "muvpzkgzl6w92",
-          "phase": "p3",
-          "days": [
-            4
-          ],
-          "start": "18:45",
-          "end": "20:45",
+          "start": "17:00",
+          "end": "19:00",
           "gym": "mufya8stx16on",
           "courts": "3"
         },
         {
-          "id": "muvpzkgz0iedw",
-          "phase": "p3",
+          "id": "mv36insncrq0g",
+          "phase": "",
           "days": [
-            6
+            3
           ],
-          "start": "12:30",
-          "end": "14:30",
-          "gym": "mufya8stx16on",
-          "courts": "1"
-        },
-        {
-          "id": "muvpzkgzr48tu",
-          "phase": "mufy7lyg578nq",
-          "days": [
-            1
-          ],
-          "start": "18:00",
-          "end": "20:00",
-          "gym": "mufya8stx16on",
-          "courts": "1"
-        },
-        {
-          "id": "muvpzkgznoinc",
-          "phase": "mufy7lyg578nq",
-          "days": [
-            4
-          ],
-          "start": "18:45",
-          "end": "20:45",
-          "gym": "mufya8stx16on",
-          "courts": "3"
-        },
-        {
-          "id": "muvpzkgzta5mo",
-          "phase": "mufy7lyg578nq",
-          "days": [
-            6
-          ],
-          "start": "12:30",
-          "end": "14:30",
+          "start": "19:00",
+          "end": "21:00",
           "gym": "mufya8stx16on",
           "courts": "1"
         }
@@ -973,115 +669,51 @@
       "name": "17 Black",
       "program": "girls",
       "coaches": [
-        "mufyucpohsemb"
+        "mufyucpohsemb",
+        "mufydritx9a5t"
       ],
       "perWeek": 3,
       "minutes": 120,
       "courts": 1,
       "courtUse": "",
-      "fixed": false,
+      "fixed": true,
       "perPhase": {
         "p1": 0
       },
-      "generatedSlots": [
+      "generatedSlots": [],
+      "fixedSlots": [
         {
-          "id": "muvpzkgz1yewg",
-          "phase": "p2",
+          "id": "mv36insnvg2n8",
+          "phase": "",
           "days": [
-            1
-          ],
-          "start": "18:15",
-          "end": "20:15",
-          "gym": "mufya8stx16on",
-          "courts": "1"
-        },
-        {
-          "id": "muvpzkgzeg8gq",
-          "phase": "p2",
-          "days": [
-            4
+            0
           ],
           "start": "18:30",
           "end": "20:30",
           "gym": "mufya8stx16on",
-          "courts": "3"
-        },
-        {
-          "id": "muvpzkgzf29ym",
-          "phase": "p2",
-          "days": [
-            6
-          ],
-          "start": "09:30",
-          "end": "11:30",
-          "gym": "mufya8stx16on",
           "courts": "1"
         },
         {
-          "id": "muvpzkgzp5s02",
-          "phase": "p3",
+          "id": "mv36insnuqqls",
+          "phase": "",
           "days": [
-            0
+            2
           ],
-          "start": "18:15",
-          "end": "20:15",
-          "gym": "mufybn675nyev",
-          "courts": "3"
-        },
-        {
-          "id": "muvpzkgzbofdl",
-          "phase": "p3",
-          "days": [
-            3
-          ],
-          "start": "18:15",
-          "end": "20:15",
+          "start": "17:00",
+          "end": "19:00",
           "gym": "mufya8stx16on",
           "courts": "3"
         },
         {
-          "id": "muvpzkgzdkyg8",
-          "phase": "p3",
+          "id": "mv36insnzv89a",
+          "phase": "",
           "days": [
-            6
+            4
           ],
-          "start": "14:30",
-          "end": "16:30",
-          "gym": "mufya8stx16on",
-          "courts": "1"
-        },
-        {
-          "id": "muvpzkgz1x1dy",
-          "phase": "mufy7lyg578nq",
-          "days": [
-            0
-          ],
-          "start": "18:15",
-          "end": "20:15",
-          "gym": "mufybn675nyev",
-          "courts": "3"
-        },
-        {
-          "id": "muvpzkgzbwefg",
-          "phase": "mufy7lyg578nq",
-          "days": [
-            3
-          ],
-          "start": "18:15",
-          "end": "20:15",
-          "gym": "mufya8stx16on",
-          "courts": "3"
-        },
-        {
-          "id": "muvpzkgzycm4c",
-          "phase": "mufy7lyg578nq",
-          "days": [
-            6
-          ],
-          "start": "14:30",
-          "end": "16:30",
-          "gym": "mufya8stx16on",
-          "courts": "1"
+          "start": "20:00",
+          "end": "21:30",
+          "gym": "mufy9950pxrdp",
+          "courts": "2"
         }
       ]
     },
@@ -1090,113 +722,49 @@
       "name": "18 Black",
       "program": "girls",
       "coaches": [
-        "mufyco8x0uoka"
+        "mufyco8x0uoka",
+        "mufydgxr4mtiv"
       ],
       "perWeek": 3,
       "minutes": 120,
       "courts": 1,
       "courtUse": "",
-      "fixed": false,
+      "fixed": true,
       "perPhase": {
         "p1": 0
       },
-      "generatedSlots": [
+      "generatedSlots": [],
+      "fixedSlots": [
         {
-          "id": "muvpzkgzdkyjo",
-          "phase": "p2",
+          "id": "mv36insni84e9",
+          "phase": "",
           "days": [
-            1
+            0
           ],
-          "start": "17:00",
-          "end": "19:00",
-          "gym": "mufya8stx16on",
-          "courts": "3"
+          "start": "16:30",
+          "end": "18:30",
+          "gym": "mufybn675nyev",
+          "courts": "1"
         },
         {
-          "id": "muvpzkgzx1z1y",
-          "phase": "p2",
+          "id": "mv36insn47iep",
+          "phase": "",
+          "days": [
+            2
+          ],
+          "start": "20:00",
+          "end": "21:30",
+          "gym": "mufy9950pxrdp",
+          "courts": "2"
+        },
+        {
+          "id": "mv36insnqk447",
+          "phase": "",
           "days": [
             3
           ],
-          "start": "16:00",
-          "end": "18:00",
-          "gym": "mufya8stx16on",
-          "courts": "3"
-        },
-        {
-          "id": "muvpzkgzfpb81",
-          "phase": "p2",
-          "days": [
-            6
-          ],
-          "start": "16:45",
-          "end": "18:45",
-          "gym": "mufya8stx16on",
-          "courts": "1"
-        },
-        {
-          "id": "muvpzkgzhqnos",
-          "phase": "p3",
-          "days": [
-            0
-          ],
-          "start": "16:30",
-          "end": "18:30",
-          "gym": "mufybn675nyev",
-          "courts": "2"
-        },
-        {
-          "id": "muvpzkgzi6f7x",
-          "phase": "p3",
-          "days": [
-            2
-          ],
-          "start": "18:30",
-          "end": "20:30",
-          "gym": "mufya8stx16on",
-          "courts": "1"
-        },
-        {
-          "id": "muvpzkgzs51tm",
-          "phase": "p3",
-          "days": [
-            5
-          ],
-          "start": "18:15",
-          "end": "20:15",
-          "gym": "mufya8stx16on",
-          "courts": "3"
-        },
-        {
-          "id": "muvpzkgzw51fb",
-          "phase": "mufy7lyg578nq",
-          "days": [
-            0
-          ],
-          "start": "16:30",
-          "end": "18:30",
-          "gym": "mufybn675nyev",
-          "courts": "2"
-        },
-        {
-          "id": "muvpzkgzky3xs",
-          "phase": "mufy7lyg578nq",
-          "days": [
-            2
-          ],
-          "start": "18:30",
-          "end": "20:30",
-          "gym": "mufya8stx16on",
-          "courts": "1"
-        },
-        {
-          "id": "muvpzkgz7d8lu",
-          "phase": "mufy7lyg578nq",
-          "days": [
-            5
-          ],
-          "start": "18:15",
-          "end": "20:15",
+          "start": "15:00",
+          "end": "17:00",
           "gym": "mufya8stx16on",
           "courts": "3"
         }
